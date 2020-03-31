@@ -1,0 +1,21 @@
+{
+  "name": "TrackingTech",
+  "displayName": "TrackingTech",
+  "expo": {
+    "name": "TrackingTech",
+    "slug": "tracking-tech",
+    "privacy": "unlisted",
+    "sdkVersion": "36.0.0",
+    "version": "1.0.0",
+    "entryPoint": "node_modules/expo/AppEntry.js",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "br.mentoria2020.tracktech",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "br.mentoria2020.tracktech",
+      "versionCode": 1
+    }
+  }
+}
