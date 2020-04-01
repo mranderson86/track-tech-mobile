@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
 
-import Login from '../pages/public/Login';
+import Login from "../pages/public/Login";
+import Register from "../pages/public/Register";
 
 const AuthStack = createStackNavigator();
 
@@ -11,10 +12,10 @@ function AuthNavigator() {
   return (
     <AuthStack.Navigator
       screenOptions={{
-        headerTitleAlign: 'center',
-        headerTintColor: '#FFFFFF',
+        headerTitleAlign: "center",
+        headerTintColor: "#FFFFFF",
         headerStyle: {
-          backgroundColor: '#F7F7F7'
+          backgroundColor: "#F7F7F7"
         }
       }}
     >
@@ -25,6 +26,8 @@ function AuthNavigator() {
           headerShown: false
         }}
       />
+
+      <AuthStack.Screen name="Register" component={Register} />
     </AuthStack.Navigator>
   );
 }

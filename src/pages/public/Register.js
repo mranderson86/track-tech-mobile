@@ -4,15 +4,11 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Image,
   KeyboardAvoidingView,
   ScrollView
 } from "react-native";
-
-import { useNavigation } from "@react-navigation/native";
-
-import Icon from "@expo/vector-icons/MaterialIcons";
+import Icon from "@expo/vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 
 import { connect } from "react-redux";
@@ -26,10 +22,8 @@ import { UserAction } from "../../store/Users/userAction";
 // const logo = require('../../assets/gerenciArqui_logo.png');
 
 // Tela de Login / Autenticação do usuário
-function Login({ UserAction }) {
+function Register({ UserAction }) {
   // const { navigation, login, UserAction } = props;
-
-  const navigation = useNavigation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -107,9 +101,22 @@ function Login({ UserAction }) {
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Input
-            label="Usuário"
+            label="Nome"
             textContentType="emailAddress"
-            leftIcon={<Icon name="email" size={24} color="#999" />}
+            leftIcon={<Icon name="user" size={24} color="#999" />}
+            value={email}
+            placeholder="Digite seu nome"
+            onChangeText={val => setEmail(val)}
+            // errorStyle={ErrorConfig}
+            // errorMessage="Por favor,informe seu usuário"
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Input
+            label="E-mail"
+            textContentType="emailAddress"
+            leftIcon={<Icon name="envelope" size={24} color="#999" />}
             value={email}
             placeholder="Digite seu usuário"
             onChangeText={val => setEmail(val)}
@@ -145,19 +152,9 @@ function Login({ UserAction }) {
             style={styles.buttonSave}
             onPress={() => submitLogin()}
           >
-            <Text style={styles.labelButtonLogin}>Entrar</Text>
+            <Text style={styles.labelButtonLogin}>Cadastrar</Text>
             <Icon name="chevron-right" size={30} color="#FFF" />
           </TouchableOpacity>
-        </View>
-
-        <View style={styles.register}>
-          <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
-          <TouchableWithoutFeedback
-            onPress={() => navigation.navigate("Register")}
-          >
-            <Text style={styles.labelRegister}>Cadastre-se</Text>
-          </TouchableWithoutFeedback>
-          <Icon name="chevron-right" size={30} color="#333" />
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -170,7 +167,6 @@ const BgColor = "#FF4949"; // "#F7F7F7"; // #FF4949
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: BgColor
   },
@@ -189,23 +185,8 @@ const styles = StyleSheet.create({
     paddingBottom: "4%"
   },
 
-  register: {
-    flexDirection: "row",
-    paddingHorizontal: "10%",
-    paddingVertical: "2%",
-    justifyContent: "space-around"
-    //backgroundColor: "#000"
-  },
-
-  labelNoRegister: {
-    color: "#666",
-    fontSize: 18
-  },
-
-  labelRegister: {
-    color: "#333",
-    fontSize: 18,
-    fontWeight: "bold"
+  label: {
+    color: "#666"
   },
 
   input: {
@@ -252,4 +233,4 @@ const mapDispatchToProps = dispatch =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
