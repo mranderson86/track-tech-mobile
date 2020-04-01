@@ -4,9 +4,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Home from "../pages/private/Home";
 
+import UsersTechnologies from "../pages/private/Projects/UsersTechnologies";
+import TechnologiesUsers from "../pages/private/Projects/TechnologiesUsers";
 import Technologies from "../pages/private/Projects/Technologies";
 import Users from "../pages/private/Projects/Users";
-import CheckIn from "../pages/private/Projects/CheckIn";
 
 const AppStack = createStackNavigator();
 
@@ -31,18 +32,26 @@ function AppNavigator() {
       />
 
       <AppStack.Screen
-        name="CheckIn"
-        component={CheckIn}
+        name="Technologies"
+        component={Technologies}
         options={{
           title: "Tecnologias"
         }}
       />
 
       <AppStack.Screen
-        name="Technologies"
-        component={Technologies}
+        name="UsersTechnologies"
+        component={UsersTechnologies}
         options={{
           title: "Usuários Por Tecnologia"
+        }}
+      />
+
+      <AppStack.Screen
+        name="TechnologiesUsers"
+        component={TechnologiesUsers}
+        options={{
+          title: "Tecnologias Por Usuário"
         }}
       />
 
@@ -50,7 +59,7 @@ function AppNavigator() {
         name="Users"
         component={Users}
         options={{
-          title: "Tecnologias Por Usuário"
+          title: "Usuários"
         }}
       />
     </AppStack.Navigator>

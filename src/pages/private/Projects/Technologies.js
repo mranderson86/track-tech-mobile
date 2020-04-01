@@ -5,11 +5,10 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
-  Image
+  TouchableOpacity
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -27,18 +26,16 @@ import AuthRender from "../AuthRender";
 // Renderiza cada tecnologia
 function CardItem(props) {
   const { item, handleCheck } = props;
-  const { users } = item;
 
   return (
-    <View style={styles.cardContainer}>
-      <View style={styles.technologyContainer}>
-        <MaterialCommunityIcons name="react" size={50} />
-        <View style={styles.technology}>
-          <Text style={styles.title}>{item.technology}</Text>
-          <Text style={styles.couter}>{users.length || 0} Usuários</Text>
-        </View>
-      </View>
-    </View>
+    <CheckBox
+      containerStyle={styles.cardContainer}
+      title={item.technology}
+      checked={item.value}
+      onPress={() => {
+        handleCheck({ ...item, value: !item.value });
+      }}
+    />
   );
 }
 
@@ -49,21 +46,21 @@ function Technologies(props) {
 
   const { reload } = route.params;
 
-  const [state, setState] = useState({
-    data: [],
-    show: true,
-    error: false
-  });
+  const [projects, setProjects] = useState([]);
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState(false);
 
   // carrega a lista das etapas
   useEffect(() => {
     Load();
-  }, []);
+  }, [navigation, reload]);
 
   // consulta a lista de projetos
   async function Load() {
     try {
-      const response = await api.get(`/technologies/users`, {
+      setShow(true);
+
+      const response = await api.get(`/technologies`, {
         headers: {
           authorization: `Bearer ${token}`
         }
@@ -72,33 +69,101 @@ function Technologies(props) {
       const { data } = response;
 
       if (data) {
-        setState({ ...state, show: false, data });
-      } else {
-        setState({ ...state, show: false, data: [] });
-      }
-    } catch (err) {
-      setState({ ...state, show: false });
+        const techs = data.map(tech => {
+          return {
+            ...tech,
+            technology_id: tech.id,
+            value: false
+          };
+        });
 
-      alert(err);
+        setProjects(techs);
+      } else {
+        setProjects([]);
+      }
+
+      setShow(false);
+    } catch (err) {
+      console.log("load ", err);
     }
   }
 
-  if (state.show && state.error) {
+  function handleCheck(tech) {
+    const techs = projects.map(t => {
+      if (t.technology_id === tech.technology_id) {
+        return {
+          ...t,
+          value: tech.value
+        };
+      }
+
+      return { ...t };
+    });
+
+    // atualiza lista de tecnologias
+    setProjects([...techs]);
+  }
+
+  async function handleSubmit() {
+    try {
+      const data = projects.filter(t => t.value === true);
+
+      console.log(data);
+
+      setShow(true);
+
+      if (data.length !== 0) {
+        const response = await api.post("/checkins", data, {
+          headers: {
+            authorization: `Bearer ${token}`
+          }
+        });
+      }
+
+      setShow(false);
+    } catch (err) {
+      console.log(err);
+
+      setError(true);
+    }
+  }
+
+  if (show && error) {
     return <Result type="error" />;
   }
 
-  if (state.show && !state.error) {
+  if (show && !error) {
     return <Result type="await" />;
   }
+
+  let showSubmit = false;
+
+  projects.map(e => {
+    if (e.value) showSubmit = true;
+  });
 
   //  Renderiza lista de projetos
   return (
     <View style={styles.container}>
       <FlatList
-        data={state.data}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => <CardItem item={item} />}
+        data={projects}
+        keyExtractor={item => item.technology_id.toString()}
+        renderItem={({ item }) => (
+          <CardItem item={item} handleCheck={handleCheck} />
+        )}
       />
+
+      {showSubmit && (
+        <View style={styles.buttonSaveContainer}>
+          <TouchableOpacity
+            style={styles.buttonSave}
+            onPress={() => handleSubmit()}
+          >
+            <MaterialIcons name="check" size={30} color="#FFF" />
+            <Text style={styles.labelButtonSave}>Confirmar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -107,37 +172,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#E5E9F2"
+    //backgroundColor: "#fff"
   },
 
   cardContainer: {
     // alinha no eixo horizontal
-    backgroundColor: "#ffffff",
-    marginHorizontal: "2%",
-    marginVertical: "1%",
-    paddingHorizontal: "2%",
-    paddingVertical: "2%",
-    borderRadius: 10
+    backgroundColor: "#fff",
+    borderRadius: 4
   },
 
-  technologyContainer: {
-    flexDirection: "row"
+  buttonSaveContainer: {
+    alignItems: "center",
+    marginTop: "5%",
+    marginBottom: "5%"
   },
 
-  technology: {
-    fontSize: 25,
+  buttonSave: {
+    width: 200,
+    height: 40,
+    backgroundColor: "#1FB6FF",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+
+  labelButtonSave: {
+    color: "#FFF",
     fontWeight: "bold",
-    marginHorizontal: "2%"
-  },
-
-  title: {
-    fontSize: 25,
-    fontWeight: "bold"
-  },
-
-  couter: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#888"
+    width: "80%",
+    paddingLeft: "30%"
   }
 });
 

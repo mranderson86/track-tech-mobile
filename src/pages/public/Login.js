@@ -203,7 +203,6 @@ const styles = StyleSheet.create({
     width: "85%",
     paddingLeft: "10%",
     textAlign: "center"
-    // backgroundColor: '#000'
   }
 });
 

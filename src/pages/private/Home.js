@@ -61,7 +61,7 @@ function Home(props) {
         activeOpacity={0.9}
         style={styles.cardContainer}
         onPress={() => {
-          navigation.navigate("CheckIn", { reload: false });
+          navigation.navigate("Technologies", { reload: false });
         }}
       >
         <View style={styles.cardItems}>
@@ -79,7 +79,7 @@ function Home(props) {
         activeOpacity={0.9}
         style={styles.cardContainer}
         onPress={() => {
-          navigation.navigate("Technologies", { reload: false });
+          navigation.navigate("UsersTechnologies", { reload: false });
         }}
       >
         <View style={styles.cardItems}>
@@ -95,7 +95,7 @@ function Home(props) {
         activeOpacity={0.9}
         style={styles.cardContainer}
         onPress={() => {
-          navigation.navigate("Users", { reload: false });
+          navigation.navigate("TechnologiesUsers", { reload: false });
         }}
       >
         <View style={styles.cardItems}>
