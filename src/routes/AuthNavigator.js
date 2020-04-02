@@ -15,7 +15,7 @@ function AuthNavigator() {
         headerTitleAlign: "center",
         headerTintColor: "#FFFFFF",
         headerStyle: {
-          backgroundColor: "#F7F7F7"
+          backgroundColor: "#FF4949"
         }
       }}
     >

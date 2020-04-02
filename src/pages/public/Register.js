@@ -8,7 +8,8 @@ import {
   KeyboardAvoidingView,
   ScrollView
 } from "react-native";
-import Icon from "@expo/vector-icons/FontAwesome";
+import Icon from "@expo/vector-icons/Feather";
+
 import { Input } from "react-native-elements";
 
 import { connect } from "react-redux";
@@ -19,56 +20,41 @@ import Result from "../../components/Result/Result";
 import api from "../../services/Api";
 import { UserAction } from "../../store/Users/userAction";
 
-// const logo = require('../../assets/gerenciArqui_logo.png');
-
 // Tela de Login / Autenticação do usuário
 function Register({ UserAction }) {
-  // const { navigation, login, UserAction } = props;
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [show, setShow] = useState(false);
-  const [error, setError] = useState(false);
-
-  // carrega a lista das etapas
-  useEffect(() => {}, []);
+  const [state, setState] = useState({
+    data: { username: "", email: "", password: "", repassword: "" },
+    show: false,
+    error: false
+  });
 
   // Envia usuário e senha para autenticação
   async function submitLogin() {
     try {
-      if (error) setError(false);
+      if (state.error) setState({ ...state, error: false });
 
-      if (email === "") {
+      console.log(state.data);
+
+      return;
+
+      if (state.data.email === "") {
         return;
       }
 
-      if (password === "") {
+      if (state.data.password === "") {
         return;
       }
 
-      setShow(true);
+      setState({ ...state, show: true });
 
-      const data = {
-        email,
-        password
-      };
+      const { data } = state;
 
-      const response = await api.post("/sessions", data);
+      const response = await api.post("/users", data);
 
       const { token } = response.data;
 
       if (token) {
         try {
-          const res = await api.get(`users/profile`, {
-            headers: {
-              authorization: `Bearer ${token}`
-            }
-          });
-
-          const user = res.data;
-
-          // altera o estado do usuário
           UserAction({
             authenticate: true,
             token,
@@ -91,7 +77,7 @@ function Register({ UserAction }) {
     }
   }
 
-  if (show) {
+  if (state.show) {
     return <Result type="await" />;
   }
 
@@ -104,11 +90,9 @@ function Register({ UserAction }) {
             label="Nome"
             textContentType="emailAddress"
             leftIcon={<Icon name="user" size={24} color="#999" />}
-            value={email}
+            value={state.username}
             placeholder="Digite seu nome"
-            onChangeText={val => setEmail(val)}
-            // errorStyle={ErrorConfig}
-            // errorMessage="Por favor,informe seu usuário"
+            onChangeText={val => setState({ ...state, username: val })}
           />
         </View>
 
@@ -116,12 +100,10 @@ function Register({ UserAction }) {
           <Input
             label="E-mail"
             textContentType="emailAddress"
-            leftIcon={<Icon name="envelope" size={24} color="#999" />}
-            value={email}
+            leftIcon={<Icon name="mail" size={24} color="#999" />}
+            value={state.email}
             placeholder="Digite seu usuário"
-            onChangeText={val => setEmail(val)}
-            // errorStyle={ErrorConfig}
-            // errorMessage="Por favor,informe seu usuário"
+            onChangeText={val => setState({ ...state, email: val })}
           />
         </View>
 
@@ -131,15 +113,25 @@ function Register({ UserAction }) {
             secureTextEntry
             textContentType="password"
             leftIcon={<Icon name="lock" size={24} color="#999" />}
-            value={password}
+            value={state.password}
             placeholder="Informe sua Senha"
-            onChangeText={val => setPassword(val)}
-            // errorStyle={ErrorConfig}
-            // errorMessage="Por favor,informe sua senha"
+            onChangeText={val => setState({ ...state, password: val })}
           />
         </View>
 
-        {error && (
+        <View style={styles.inputContainer}>
+          <Input
+            label="Confirmar Senha"
+            secureTextEntry
+            textContentType="password"
+            leftIcon={<Icon name="lock" size={24} color="#999" />}
+            value={state.password}
+            placeholder="Informe sua Senha"
+            onChangeText={val => setState({ ...state, repassword: val })}
+          />
+        </View>
+
+        {state.error && (
           <View>
             <Text style={{ color: "#FF4949", textAlign: "center" }}>
               Usuário e/ou Senha incorreto !
@@ -161,8 +153,7 @@ function Register({ UserAction }) {
   );
 }
 
-const BgColor = "#FF4949"; // "#F7F7F7"; // #FF4949
-// const ErrorConfig = { color: '#FF4949', fontSize: 18 };
+const BgColor = "#FF4949"; // "#F7F7F7"
 
 const styles = StyleSheet.create({
   container: {
@@ -218,12 +209,6 @@ const styles = StyleSheet.create({
   }
 });
 
-// State do usuário em props
-const mapStateToProps = state => {
-  const login = state;
-  return { login };
-};
-
 // Action do userReducer em props
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -233,4 +218,4 @@ const mapDispatchToProps = dispatch =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default connect(mapDispatchToProps)(Register);

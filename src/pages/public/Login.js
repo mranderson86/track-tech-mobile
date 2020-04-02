@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -18,12 +18,26 @@ import { Input } from "react-native-elements";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import { Formik } from "formik";
+import * as Yup from "yup";
+
 import Result from "../../components/Result/Result";
 
 import api from "../../services/Api";
 import { UserAction } from "../../store/Users/userAction";
 
 // const logo = require('../../assets/gerenciArqui_logo.png');
+// Form Validation
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .label("E-mail")
+    .email("Informe seu e-mail")
+    .required("Por favor,Informe um e-mail válido"),
+  password: Yup.string()
+    .label("Senha")
+    .required("Por favor,Informe sua senha")
+    .min(3, "Senha deve ter no mínimo 3 digitos")
+});
 
 // Tela de Login / Autenticação do usuário
 function Login({ UserAction }) {
@@ -37,11 +51,8 @@ function Login({ UserAction }) {
   const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
 
-  // carrega a lista das etapas
-  useEffect(() => {}, []);
-
   // Envia usuário e senha para autenticação
-  async function submitLogin() {
+  async function submitLogin(values) {
     try {
       if (error) setError(false);
 
@@ -104,70 +115,83 @@ function Login({ UserAction }) {
   //  Renderiza cada etapa da lista de Etapa
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Input
-            label="Usuário"
-            textContentType="emailAddress"
-            leftIcon={<Icon name="email" size={24} color="#999" />}
-            value={email}
-            placeholder="Digite seu usuário"
-            onChangeText={val => setEmail(val)}
-            // errorStyle={ErrorConfig}
-            // errorMessage="Por favor,informe seu usuário"
-          />
-        </View>
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        onSubmit={values => {
+          submitLogin(values);
+        }}
+        validationSchema={validationSchema}
+      >
+        {props => (
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <Input
+                name="email"
+                label="Usuário"
+                textContentType="emailAddress"
+                leftIcon={<Icon name="email" size={24} color="#999" />}
+                value={props.values.email}
+                placeholder="Digite seu usuário"
+                onBlur={props.handleBlur("email")}
+                onChangeText={props.handleChange("email")}
+                //onChangeText={val => setEmail(val)}
+                errorStyle={styles.error}
+                errorMessage={props.touched.email && props.errors.email}
+              />
+            </View>
 
-        <View style={styles.inputContainer}>
-          <Input
-            label="Senha"
-            secureTextEntry
-            textContentType="password"
-            leftIcon={<Icon name="lock" size={24} color="#999" />}
-            value={password}
-            placeholder="Informe sua Senha"
-            onChangeText={val => setPassword(val)}
-            // errorStyle={ErrorConfig}
-            // errorMessage="Por favor,informe sua senha"
-          />
-        </View>
+            <View style={styles.inputContainer}>
+              <Input
+                name="password"
+                label="Senha"
+                secureTextEntry
+                textContentType="password"
+                leftIcon={<Icon name="lock" size={24} color="#999" />}
+                value={props.values.password}
+                placeholder="Informe sua Senha"
+                onBlur={props.handleBlur("password")}
+                onChangeText={props.handleChange("password")}
+                //onChangeText={val => setPassword(val)}
+                errorStyle={styles.error}
+                errorMessage={props.touched.password && props.errors.password}
+              />
+            </View>
 
-        {error && (
-          <View>
-            <Text style={{ color: "#FF4949", textAlign: "center" }}>
-              Usuário e/ou Senha incorreto !
-            </Text>
+            <View style={styles.buttonLoginContainer}>
+              <TouchableOpacity
+                style={styles.buttonSave}
+                onPress={props.handleSubmit}
+                //onPress={() => submitLogin()}
+              >
+                <Text style={styles.labelButtonLogin}>Entrar</Text>
+                <Icon name="chevron-right" size={30} color="#FFF" />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
+      </Formik>
 
-        <View style={styles.buttonLoginContainer}>
-          <TouchableOpacity
-            style={styles.buttonSave}
-            onPress={() => submitLogin()}
-          >
-            <Text style={styles.labelButtonLogin}>Entrar</Text>
-            <Icon name="chevron-right" size={30} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.register}>
-          <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
-          <TouchableWithoutFeedback
-            onPress={() => navigation.navigate("Register")}
-          >
-            <Text style={styles.labelRegister}>Cadastre-se</Text>
-          </TouchableWithoutFeedback>
-          <Icon name="chevron-right" size={30} color="#333" />
-        </View>
+      <View style={styles.register}>
+        <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate("Register")}
+        >
+          <Text style={styles.labelRegister}>Cadastre-se</Text>
+        </TouchableWithoutFeedback>
+        <Icon name="chevron-right" size={30} color="#333" />
       </View>
     </KeyboardAvoidingView>
   );
 }
 
-const BgColor = "#FF4949"; // "#F7F7F7"; // #FF4949
-// const ErrorConfig = { color: '#FF4949', fontSize: 18 };
+const BgColor = "#FF4949"; // "#F7F7F7"
 
 const styles = StyleSheet.create({
+  error: {
+    color: "#FF4949",
+    fontSize: 18
+  },
+
   container: {
     flex: 1,
     justifyContent: "center",
