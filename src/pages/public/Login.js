@@ -13,7 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 
 import Icon from "@expo/vector-icons/MaterialIcons";
-import { Input } from "react-native-elements";
+import { Input, Button } from "react-native-elements";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -56,19 +56,11 @@ function Login({ UserAction }) {
     try {
       if (error) setError(false);
 
-      if (email === "") {
-        return;
-      }
-
-      if (password === "") {
-        return;
-      }
-
-      setShow(true);
+      // setShow(true);
 
       const data = {
-        email,
-        password
+        email: values.email,
+        password: values.password
       };
 
       const response = await api.post("/sessions", data);
@@ -92,10 +84,10 @@ function Login({ UserAction }) {
             user
           });
         } catch (err) {
-          console.log("login(user) ", err);
+          alert(err);
 
-          setShow(false);
-          setError(true);
+          // setShow(false);
+          // setError(true);
         }
       } else {
         setShow(false);
@@ -103,8 +95,8 @@ function Login({ UserAction }) {
     } catch (err) {
       alert(err);
 
-      setShow(false);
-      setError(true);
+      // setShow(false);
+      // setError(true);
     }
   }
 
@@ -134,7 +126,6 @@ function Login({ UserAction }) {
                 placeholder="Digite seu usuário"
                 onBlur={props.handleBlur("email")}
                 onChangeText={props.handleChange("email")}
-                //onChangeText={val => setEmail(val)}
                 errorStyle={styles.error}
                 errorMessage={props.touched.email && props.errors.email}
               />
@@ -151,22 +142,22 @@ function Login({ UserAction }) {
                 placeholder="Informe sua Senha"
                 onBlur={props.handleBlur("password")}
                 onChangeText={props.handleChange("password")}
-                //onChangeText={val => setPassword(val)}
                 errorStyle={styles.error}
                 errorMessage={props.touched.password && props.errors.password}
               />
             </View>
 
-            <View style={styles.buttonLoginContainer}>
-              <TouchableOpacity
-                style={styles.buttonSave}
-                onPress={props.handleSubmit}
-                //onPress={() => submitLogin()}
-              >
-                <Text style={styles.labelButtonLogin}>Entrar</Text>
-                <Icon name="chevron-right" size={30} color="#FFF" />
-              </TouchableOpacity>
-            </View>
+            <Button
+              containerStyle={styles.buttonLoginContainer}
+              buttonStyle={styles.buttonSave}
+              titleStyle={styles.labelButtonLogin}
+              icon={<Icon name="chevron-right" size={30} color="white" />}
+              iconRight
+              title="Entrar"
+              onPress={props.handleSubmit}
+              // **disabled={!props.isValid || props.isSubmitting}
+              loading={props.isSubmitting}
+            />
           </View>
         )}
       </Formik>
