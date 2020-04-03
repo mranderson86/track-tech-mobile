@@ -27,7 +27,14 @@ function AuthNavigator() {
         }}
       />
 
-      <AuthStack.Screen name="Register" component={Register} />
+      <AuthStack.Screen
+        name="Register"
+        component={Register}
+        options={{
+          title: "Cadastre-se"
+          // headerShown: false
+        }}
+      />
     </AuthStack.Navigator>
   );
 }

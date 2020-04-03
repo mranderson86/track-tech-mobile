@@ -3,159 +3,198 @@ import {
   Text,
   StyleSheet,
   View,
-  TouchableOpacity,
   Image,
-  KeyboardAvoidingView,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
 import Icon from "@expo/vector-icons/Feather";
 
-import { Input } from "react-native-elements";
+import { Input, Button } from "react-native-elements";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 import Result from "../../components/Result/Result";
 
 import api from "../../services/Api";
 import { UserAction } from "../../store/Users/userAction";
 
+const validationSchema = Yup.object().shape({
+  username: Yup.string()
+    .label("Nome")
+    .required("Por favor,Informe seu nome"),
+  email: Yup.string()
+    .label("E-mail")
+    .email("Informe seu e-mail")
+    .required("Por favor, informe seu e-mail"),
+  password: Yup.string()
+    .label("Senha")
+    .required("Por favor,Informe sua senha")
+    .min(3, "Senha deve ter no mínimo 3 digitos"),
+  repassword: Yup.string()
+    .label("Confirmar Senha")
+    .min(3, "Senha deve ter no mínimo 3 digitos")
+    .oneOf([Yup.ref("password"), null], "Senha não confere")
+});
+
 // Tela de Login / Autenticação do usuário
-function Register({ UserAction }) {
-  const [state, setState] = useState({
-    data: { username: "", email: "", password: "", repassword: "" },
-    show: false,
-    error: false
-  });
+function Register(props) {
+  const { UserAction } = props;
 
   // Envia usuário e senha para autenticação
-  async function submitLogin() {
+  async function submitRegister(values) {
     try {
-      if (state.error) setState({ ...state, error: false });
+      const { username, email, password } = values;
 
-      console.log(state.data);
+      const user = {
+        username,
+        email,
+        password
+      };
 
-      return;
+      const response = await api.post("/users", user);
 
-      if (state.data.email === "") {
-        return;
-      }
+      const { data } = response;
 
-      if (state.data.password === "") {
-        return;
-      }
-
-      setState({ ...state, show: true });
-
-      const { data } = state;
-
-      const response = await api.post("/users", data);
-
-      const { token } = response.data;
-
-      if (token) {
+      if (data) {
         try {
-          UserAction({
-            authenticate: true,
-            token,
-            user
-          });
-        } catch (err) {
-          console.log("login(user) ", err);
+          const login = { email, password };
+          const authentication = await api.post("/sessions", login);
+          const { token } = authentication.data;
 
-          setShow(false);
-          setError(true);
+          if (token) {
+            UserAction({
+              authenticate: true,
+              user,
+              token
+            });
+          }
+        } catch (err) {
+          alert(`Token fail ! ${err}`);
         }
       } else {
-        setShow(false);
+        alert("Register not found");
       }
     } catch (err) {
-      alert(err);
-
-      setShow(false);
-      setError(true);
+      alert(`Register fail ! ${err}`);
     }
   }
 
-  if (state.show) {
-    return <Result type="await" />;
-  }
-
-  //  Renderiza cada etapa da lista de Etapa
+  //  Renderiza cadastro
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Input
-            label="Nome"
-            textContentType="emailAddress"
-            leftIcon={<Icon name="user" size={24} color="#999" />}
-            value={state.username}
-            placeholder="Digite seu nome"
-            onChangeText={val => setState({ ...state, username: val })}
-          />
-        </View>
+      <Formik
+        initialValues={{
+          username: "",
+          email: "",
+          password: "",
+          repassword: ""
+        }}
+        onSubmit={values => {
+          submitRegister(values);
+        }}
+        validationSchema={validationSchema}
+      >
+        {props => (
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <Input
+                name="username"
+                label="Nome"
+                textContentType="username"
+                leftIcon={<Icon name="user" size={24} color="#999" />}
+                value={props.values.username}
+                onChangeText={props.handleChange("username")}
+                onBlur={props.handleBlur("username")}
+                errorStyle={styles.error}
+                errorMessage={props.touched.username && props.errors.username}
+                inputStyle={{ paddingLeft: 5 }}
+              />
+            </View>
 
-        <View style={styles.inputContainer}>
-          <Input
-            label="E-mail"
-            textContentType="emailAddress"
-            leftIcon={<Icon name="mail" size={24} color="#999" />}
-            value={state.email}
-            placeholder="Digite seu usuário"
-            onChangeText={val => setState({ ...state, email: val })}
-          />
-        </View>
+            <View style={styles.inputContainer}>
+              <Input
+                name="email"
+                label="E-mail"
+                textContentType="emailAddress"
+                leftIcon={<Icon name="mail" size={24} color="#999" />}
+                value={props.values.email}
+                onChangeText={props.handleChange("email")}
+                onBlur={props.handleBlur("email")}
+                errorStyle={styles.error}
+                errorMessage={props.touched.email && props.errors.email}
+                inputStyle={{ paddingLeft: 5 }}
+              />
+            </View>
 
-        <View style={styles.inputContainer}>
-          <Input
-            label="Senha"
-            secureTextEntry
-            textContentType="password"
-            leftIcon={<Icon name="lock" size={24} color="#999" />}
-            value={state.password}
-            placeholder="Informe sua Senha"
-            onChangeText={val => setState({ ...state, password: val })}
-          />
-        </View>
+            <View style={styles.inputContainer}>
+              <Input
+                name="password"
+                label="Senha"
+                secureTextEntry
+                textContentType="password"
+                leftIcon={<Icon name="lock" size={24} color="#999" />}
+                value={props.values.password}
+                onChangeText={props.handleChange("password")}
+                onBlur={props.handleBlur("password")}
+                errorStyle={styles.error}
+                errorMessage={props.touched.password && props.errors.password}
+                inputStyle={{ paddingLeft: 5 }}
+              />
+            </View>
 
-        <View style={styles.inputContainer}>
-          <Input
-            label="Confirmar Senha"
-            secureTextEntry
-            textContentType="password"
-            leftIcon={<Icon name="lock" size={24} color="#999" />}
-            value={state.password}
-            placeholder="Informe sua Senha"
-            onChangeText={val => setState({ ...state, repassword: val })}
-          />
-        </View>
+            <View style={styles.inputContainer}>
+              <Input
+                name="repassword"
+                label="Confirmar Senha"
+                secureTextEntry
+                textContentType="password"
+                leftIcon={<Icon name="lock" size={24} color="#999" />}
+                value={props.values.repassword}
+                onChangeText={props.handleChange("repassword")}
+                onBlur={props.handleBlur("repassword")}
+                errorStyle={styles.error}
+                errorMessage={
+                  props.touched.repassword && props.errors.repassword
+                }
+                inputStyle={{ paddingLeft: 5 }}
+              />
+            </View>
 
-        {state.error && (
-          <View>
-            <Text style={{ color: "#FF4949", textAlign: "center" }}>
-              Usuário e/ou Senha incorreto !
-            </Text>
+            <Button
+              containerStyle={styles.buttonLoginContainer}
+              buttonStyle={styles.buttonSave}
+              titleStyle={styles.labelButtonLogin}
+              icon={<Icon name="chevron-right" size={30} color="white" />}
+              iconRight
+              title="Cadastrar"
+              onPress={props.handleSubmit}
+              // disabled={!props.isValid || props.isSubmitting}
+              loading={props.isSubmitting}
+            />
           </View>
         )}
-
-        <View style={styles.buttonLoginContainer}>
-          <TouchableOpacity
-            style={styles.buttonSave}
-            onPress={() => submitLogin()}
-          >
-            <Text style={styles.labelButtonLogin}>Cadastrar</Text>
-            <Icon name="chevron-right" size={30} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </Formik>
     </KeyboardAvoidingView>
   );
 }
 
-const BgColor = "#FF4949"; // "#F7F7F7"
+const BgColor = "#FF4949";
 
 const styles = StyleSheet.create({
+  error: {
+    color: "#FF4949",
+    fontSize: 18
+  },
+
+  scroll: {
+    flex: 1,
+    width: "100%"
+  },
+
   container: {
     flex: 1,
     alignItems: "center",
@@ -218,4 +257,4 @@ const mapDispatchToProps = dispatch =>
     dispatch
   );
 
-export default connect(mapDispatchToProps)(Register);
+export default connect(null, mapDispatchToProps)(Register);

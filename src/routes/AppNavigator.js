@@ -19,7 +19,7 @@ function AppNavigator() {
         headerTitleAlign: "center",
         headerTintColor: "#FFFFFF",
         headerStyle: {
-          backgroundColor: "#1FB6FF"
+          backgroundColor: "#FF4949"
         }
       }}
     >

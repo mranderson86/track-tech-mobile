@@ -42,7 +42,6 @@ const validationSchema = Yup.object().shape({
 // Tela de Login / Autenticação do usuário
 function Login({ UserAction }) {
   // const { navigation, login, UserAction } = props;
-
   const navigation = useNavigation();
 
   const [email, setEmail] = useState("");
@@ -119,15 +118,15 @@ function Login({ UserAction }) {
             <View style={styles.inputContainer}>
               <Input
                 name="email"
-                label="Usuário"
+                label="E-mail"
                 textContentType="emailAddress"
                 leftIcon={<Icon name="email" size={24} color="#999" />}
                 value={props.values.email}
-                placeholder="Digite seu usuário"
                 onBlur={props.handleBlur("email")}
                 onChangeText={props.handleChange("email")}
                 errorStyle={styles.error}
                 errorMessage={props.touched.email && props.errors.email}
+                inputStyle={{ paddingLeft: 5 }}
               />
             </View>
 
@@ -139,11 +138,11 @@ function Login({ UserAction }) {
                 textContentType="password"
                 leftIcon={<Icon name="lock" size={24} color="#999" />}
                 value={props.values.password}
-                placeholder="Informe sua Senha"
                 onBlur={props.handleBlur("password")}
                 onChangeText={props.handleChange("password")}
                 errorStyle={styles.error}
                 errorMessage={props.touched.password && props.errors.password}
+                inputStyle={{ paddingLeft: 5 }}
               />
             </View>
 
@@ -158,19 +157,19 @@ function Login({ UserAction }) {
               // **disabled={!props.isValid || props.isSubmitting}
               loading={props.isSubmitting}
             />
+
+            <View style={styles.register}>
+              <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
+              <TouchableWithoutFeedback
+                onPress={() => navigation.navigate("Register")}
+              >
+                <Text style={styles.labelRegister}>Cadastre-se</Text>
+              </TouchableWithoutFeedback>
+              <Icon name="chevron-right" size={30} color="#333" />
+            </View>
           </View>
         )}
       </Formik>
-
-      <View style={styles.register}>
-        <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
-        <TouchableWithoutFeedback
-          onPress={() => navigation.navigate("Register")}
-        >
-          <Text style={styles.labelRegister}>Cadastre-se</Text>
-        </TouchableWithoutFeedback>
-        <Icon name="chevron-right" size={30} color="#333" />
-      </View>
     </KeyboardAvoidingView>
   );
 }
