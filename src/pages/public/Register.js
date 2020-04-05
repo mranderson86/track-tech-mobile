@@ -5,7 +5,8 @@ import {
   View,
   Image,
   ScrollView,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import Icon from "@expo/vector-icons/Feather";
 
@@ -43,6 +44,8 @@ const validationSchema = Yup.object().shape({
 // Tela de Login / Autenticação do usuário
 function Register(props) {
   const { UserAction } = props;
+
+  const [state, setState] = useState({ enabledKeyboard: false });
 
   // Envia usuário e senha para autenticação
   async function submitRegister(values) {
@@ -85,25 +88,26 @@ function Register(props) {
 
   //  Renderiza cadastro
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-      keyboardVerticalOffset={100}
+    <Formik
+      initialValues={{
+        username: "",
+        email: "",
+        password: "",
+        repassword: ""
+      }}
+      onSubmit={values => {
+        submitRegister(values);
+      }}
+      validationSchema={validationSchema}
     >
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Formik
-          initialValues={{
-            username: "",
-            email: "",
-            password: "",
-            repassword: ""
-          }}
-          onSubmit={values => {
-            submitRegister(values);
-          }}
-          validationSchema={validationSchema}
+      {props => (
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "android" ? "height" : "padding"}
+          keyboardVerticalOffset={100}
+          enabled={state.enabledKeyboard}
         >
-          {props => (
+          <ScrollView contentContainerStyle={styles.scroll}>
             <View style={styles.formContainer}>
               <View style={styles.inputContainer}>
                 <Input
@@ -114,6 +118,7 @@ function Register(props) {
                   value={props.values.username}
                   onChangeText={props.handleChange("username")}
                   onBlur={props.handleBlur("username")}
+                  onFocus={() => setState({ ...state, enabledKeyboard: false })}
                   errorStyle={styles.error}
                   errorMessage={props.touched.username && props.errors.username}
                   inputStyle={{ paddingLeft: 5 }}
@@ -129,6 +134,7 @@ function Register(props) {
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
                   onBlur={props.handleBlur("email")}
+                  onFocus={() => setState({ ...state, enabledKeyboard: false })}
                   errorStyle={styles.error}
                   errorMessage={props.touched.email && props.errors.email}
                   inputStyle={{ paddingLeft: 5 }}
@@ -145,6 +151,7 @@ function Register(props) {
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
                   onBlur={props.handleBlur("password")}
+                  onFocus={() => setState({ ...state, enabledKeyboard: true })}
                   errorStyle={styles.error}
                   errorMessage={props.touched.password && props.errors.password}
                   inputStyle={{ paddingLeft: 5 }}
@@ -161,6 +168,7 @@ function Register(props) {
                   value={props.values.repassword}
                   onChangeText={props.handleChange("repassword")}
                   onBlur={props.handleBlur("repassword")}
+                  onFocus={() => setState({ ...state, enabledKeyboard: true })}
                   errorStyle={styles.error}
                   errorMessage={
                     props.touched.repassword && props.errors.repassword
@@ -181,10 +189,10 @@ function Register(props) {
                 loading={props.isSubmitting}
               />
             </View>
-          )}
-        </Formik>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
+    </Formik>
   );
 }
 
@@ -202,14 +210,17 @@ const styles = StyleSheet.create({
   },
 
   scroll: {
-    width: "100%",
+    flex: 1,
+    backgroundColor: BgColor,
+    justifyContent: "center",
+    alignItems: "center",
     alignItems: "center"
   },
 
   formContainer: {
     backgroundColor: "#FFF",
     width: "95%",
-    marginTop: "5%",
+    marginTop: "1%",
     borderRadius: 10
   },
 

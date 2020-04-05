@@ -2,9 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 27387,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "packagerPid": 28482,
+  "expoServerNgrokUrl": "https://cs-yvj.mranderson86.tracking-tech-graphql.exp.direct",
+  "packagerNgrokUrl": "https://packager.cs-yvj.mranderson86.tracking-tech-graphql.exp.direct",
+  "ngrokPid": 28577,
   "webpackServerPort": null
 }

@@ -7,7 +7,8 @@ import {
   TouchableWithoutFeedback,
   Image,
   KeyboardAvoidingView,
-  ScrollView
+  ScrollView,
+  Platform
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -105,15 +106,19 @@ function Login({ UserAction }) {
 
   //  Renderiza cada etapa da lista de Etapa
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        onSubmit={values => {
-          submitLogin(values);
-        }}
-        validationSchema={validationSchema}
-      >
-        {props => (
+    <Formik
+      initialValues={{ email: "", password: "" }}
+      onSubmit={values => {
+        submitLogin(values);
+      }}
+      validationSchema={validationSchema}
+    >
+      {props => (
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={Platform.OS === "android" ? "height" : "padding"}
+          enabled={false}
+        >
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Input
@@ -168,9 +173,9 @@ function Login({ UserAction }) {
               <Icon name="chevron-right" size={30} color="#333" />
             </View>
           </View>
-        )}
-      </Formik>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      )}
+    </Formik>
   );
 }
 
@@ -205,10 +210,9 @@ const styles = StyleSheet.create({
 
   register: {
     flexDirection: "row",
-    paddingHorizontal: "10%",
+    paddingHorizontal: "5%",
     paddingVertical: "2%",
     justifyContent: "space-around"
-    //backgroundColor: "#000"
   },
 
   labelNoRegister: {
