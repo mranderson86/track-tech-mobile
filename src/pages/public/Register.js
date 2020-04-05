@@ -85,99 +85,105 @@ function Register(props) {
 
   //  Renderiza cadastro
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <Formik
-        initialValues={{
-          username: "",
-          email: "",
-          password: "",
-          repassword: ""
-        }}
-        onSubmit={values => {
-          submitRegister(values);
-        }}
-        validationSchema={validationSchema}
-      >
-        {props => (
-          <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <Input
-                name="username"
-                label="Nome"
-                textContentType="username"
-                leftIcon={<Icon name="user" size={24} color="#999" />}
-                value={props.values.username}
-                onChangeText={props.handleChange("username")}
-                onBlur={props.handleBlur("username")}
-                errorStyle={styles.error}
-                errorMessage={props.touched.username && props.errors.username}
-                inputStyle={{ paddingLeft: 5 }}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+      keyboardVerticalOffset={100}
+    >
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <Formik
+          initialValues={{
+            username: "",
+            email: "",
+            password: "",
+            repassword: ""
+          }}
+          onSubmit={values => {
+            submitRegister(values);
+          }}
+          validationSchema={validationSchema}
+        >
+          {props => (
+            <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                <Input
+                  name="username"
+                  label="Nome"
+                  textContentType="username"
+                  leftIcon={<Icon name="user" size={24} color="#999" />}
+                  value={props.values.username}
+                  onChangeText={props.handleChange("username")}
+                  onBlur={props.handleBlur("username")}
+                  errorStyle={styles.error}
+                  errorMessage={props.touched.username && props.errors.username}
+                  inputStyle={{ paddingLeft: 5 }}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Input
+                  name="email"
+                  label="E-mail"
+                  textContentType="emailAddress"
+                  leftIcon={<Icon name="mail" size={24} color="#999" />}
+                  value={props.values.email}
+                  onChangeText={props.handleChange("email")}
+                  onBlur={props.handleBlur("email")}
+                  errorStyle={styles.error}
+                  errorMessage={props.touched.email && props.errors.email}
+                  inputStyle={{ paddingLeft: 5 }}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Input
+                  name="password"
+                  label="Senha"
+                  secureTextEntry
+                  textContentType="password"
+                  leftIcon={<Icon name="lock" size={24} color="#999" />}
+                  value={props.values.password}
+                  onChangeText={props.handleChange("password")}
+                  onBlur={props.handleBlur("password")}
+                  errorStyle={styles.error}
+                  errorMessage={props.touched.password && props.errors.password}
+                  inputStyle={{ paddingLeft: 5 }}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Input
+                  name="repassword"
+                  label="Confirmar Senha"
+                  secureTextEntry
+                  textContentType="password"
+                  leftIcon={<Icon name="lock" size={24} color="#999" />}
+                  value={props.values.repassword}
+                  onChangeText={props.handleChange("repassword")}
+                  onBlur={props.handleBlur("repassword")}
+                  errorStyle={styles.error}
+                  errorMessage={
+                    props.touched.repassword && props.errors.repassword
+                  }
+                  inputStyle={{ paddingLeft: 5 }}
+                />
+              </View>
+
+              <Button
+                containerStyle={styles.buttonLoginContainer}
+                buttonStyle={styles.buttonSave}
+                titleStyle={styles.labelButtonLogin}
+                icon={<Icon name="chevron-right" size={30} color="white" />}
+                iconRight
+                title="Cadastrar"
+                onPress={props.handleSubmit}
+                // disabled={!props.isValid || props.isSubmitting}
+                loading={props.isSubmitting}
               />
             </View>
-
-            <View style={styles.inputContainer}>
-              <Input
-                name="email"
-                label="E-mail"
-                textContentType="emailAddress"
-                leftIcon={<Icon name="mail" size={24} color="#999" />}
-                value={props.values.email}
-                onChangeText={props.handleChange("email")}
-                onBlur={props.handleBlur("email")}
-                errorStyle={styles.error}
-                errorMessage={props.touched.email && props.errors.email}
-                inputStyle={{ paddingLeft: 5 }}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Input
-                name="password"
-                label="Senha"
-                secureTextEntry
-                textContentType="password"
-                leftIcon={<Icon name="lock" size={24} color="#999" />}
-                value={props.values.password}
-                onChangeText={props.handleChange("password")}
-                onBlur={props.handleBlur("password")}
-                errorStyle={styles.error}
-                errorMessage={props.touched.password && props.errors.password}
-                inputStyle={{ paddingLeft: 5 }}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Input
-                name="repassword"
-                label="Confirmar Senha"
-                secureTextEntry
-                textContentType="password"
-                leftIcon={<Icon name="lock" size={24} color="#999" />}
-                value={props.values.repassword}
-                onChangeText={props.handleChange("repassword")}
-                onBlur={props.handleBlur("repassword")}
-                errorStyle={styles.error}
-                errorMessage={
-                  props.touched.repassword && props.errors.repassword
-                }
-                inputStyle={{ paddingLeft: 5 }}
-              />
-            </View>
-
-            <Button
-              containerStyle={styles.buttonLoginContainer}
-              buttonStyle={styles.buttonSave}
-              titleStyle={styles.labelButtonLogin}
-              icon={<Icon name="chevron-right" size={30} color="white" />}
-              iconRight
-              title="Cadastrar"
-              onPress={props.handleSubmit}
-              // disabled={!props.isValid || props.isSubmitting}
-              loading={props.isSubmitting}
-            />
-          </View>
-        )}
-      </Formik>
+          )}
+        </Formik>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -190,15 +196,14 @@ const styles = StyleSheet.create({
     fontSize: 18
   },
 
-  scroll: {
-    flex: 1,
-    width: "100%"
-  },
-
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: BgColor
+  },
+
+  scroll: {
+    width: "100%",
+    alignItems: "center"
   },
 
   formContainer: {
@@ -211,18 +216,12 @@ const styles = StyleSheet.create({
   inputContainer: {
     paddingLeft: "5%",
     paddingRight: "5%",
-    paddingTop: "4%",
+    paddingTop: "2%",
     paddingBottom: "4%"
   },
 
   label: {
     color: "#666"
-  },
-
-  input: {
-    borderBottomColor: "#888",
-    borderBottomWidth: 1,
-    height: 40
   },
 
   buttonLoginContainer: {
