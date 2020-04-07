@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -21,13 +21,17 @@ import { bindActionCreators } from "redux";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Query, Mutation } from "react-apollo";
+import { useMutation, useQuery } from "react-apollo";
+import gql from "graphql-tag";
 
 import Result from "../../components/Result/Result";
 
 import api from "../../services/Api";
+import { createClientApollo } from "../../services/Apollo";
+
 import { UserAction } from "../../store/Users/userAction";
 
-// const logo = require('../../assets/gerenciArqui_logo.png');
 // Form Validation
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -40,63 +44,132 @@ const validationSchema = Yup.object().shape({
     .min(3, "Senha deve ter no mínimo 3 digitos")
 });
 
+const LOGIN_MUTATION = gql`
+  mutation postLogin($email: String!, $password: String!) {
+    login(email: $email, password: $password)
+  }
+`;
+
+const USER_QUERY = gql`
+  {
+    currentUser {
+      id
+      username
+      email
+    }
+  }
+`;
+
 // Tela de Login / Autenticação do usuário
-function Login({ UserAction }) {
-  // const { navigation, login, UserAction } = props;
+function Login(props) {
+  const { UserAction } = props;
   const navigation = useNavigation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginMutation] = useMutation(LOGIN_MUTATION);
+
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
 
   const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
 
+  useEffect(() => {
+    async function load() {
+      // const response = await client.query({
+      //   query: gql`
+      //     {
+      //       allUsers {
+      //         id
+      //         username
+      //         email
+      //       }
+      //     }
+      //   `
+      // });
+
+      console.log(response);
+    }
+
+    // load();
+  }, []);
+
   // Envia usuário e senha para autenticação
-  async function submitLogin(values) {
+  async function submitLogin({ values, setSubmitting }) {
     try {
       if (error) setError(false);
 
-      // setShow(true);
+      const { email, password } = values;
 
-      const data = {
-        email: values.email,
-        password: values.password
-      };
+      const { data } = await loginMutation({
+        variables: values
+      });
 
-      const response = await api.post("/sessions", data);
+      if (data) {
+        const token = data.login;
+        const authenticate = true;
 
-      const { token } = response.data;
+        const client = createClientApollo(token);
 
-      if (token) {
-        try {
-          const res = await api.get(`users/profile`, {
-            headers: {
-              authorization: `Bearer ${token}`
-            }
-          });
+        // consulta usuário (?)
+        // const user = await useQuery(USER_QUERY);
+        const response = await client.query({
+          query: USER_QUERY
+        });
 
-          const user = res.data;
+        const { currentUser } = response.data;
 
-          // altera o estado do usuário
+        if (currentUser) {
+          const user = currentUser;
+
           UserAction({
-            authenticate: true,
+            authenticate,
             token,
             user
           });
-        } catch (err) {
-          alert(err);
-
-          // setShow(false);
-          // setError(true);
         }
       } else {
-        setShow(false);
+        setSubmitting(false);
+        alert("Fail authenticate, try again");
       }
-    } catch (err) {
-      alert(err);
 
-      // setShow(false);
-      // setError(true);
+      // const response = await client.mutate({
+      //   mutation: gql`
+      //     mutation($email: String!, $password: String!) {
+      //       login(objects: [{ email: $email, password: $password }])
+      //     }
+      //   `,
+      //   variables: {
+      //     email,
+      //     password
+      //   }
+      // });
+
+      //const { token } = response.data;
+      // if (token) {
+      //   try {
+      //     const res = await api.get(`users/profile`, {
+      //       headers: {
+      //         authorization: `Bearer ${token}`
+      //       }
+      //     });
+
+      //     const user = res.data;
+
+      //     // altera o estado do usuário
+      //     UserAction({
+      //       authenticate: true,
+      //       token,
+      //       user
+      //     });
+      //   } catch (err) {
+      //     alert(err);
+      //   }
+      // } else {
+      //   setShow(false);
+      // }
+    } catch (err) {
+      setSubmitting(false);
+      alert(err);
     }
   }
 
@@ -108,10 +181,10 @@ function Login({ UserAction }) {
   return (
     <Formik
       initialValues={{ email: "", password: "" }}
-      onSubmit={values => {
-        submitLogin(values);
-      }}
       validationSchema={validationSchema}
+      onSubmit={(values, { props, setErrors, setSubmitting }) => {
+        submitLogin({ values, setSubmitting });
+      }}
     >
       {props => (
         <KeyboardAvoidingView
@@ -163,6 +236,34 @@ function Login({ UserAction }) {
               loading={props.isSubmitting}
             />
 
+            {/* <Mutation
+              mutation={LOGIN_MUTATION}
+              variables={{
+                email: props.values.email,
+                password: props.values.password
+              }}
+              onCompleted={response => {
+                console.log(response);
+              }}
+              onError={error => {
+                alert(error);
+              }}
+            >
+              {postLogin => (
+                <Button
+                  containerStyle={styles.buttonLoginContainer}
+                  buttonStyle={styles.buttonSave}
+                  titleStyle={styles.labelButtonLogin}
+                  icon={<Icon name="chevron-right" size={30} color="white" />}
+                  iconRight
+                  title="Entrar"
+                  onPress={postLogin}
+                  // **disabled={!props.isValid || props.isSubmitting}
+                  loading={props.isSubmitting}
+                />
+              )}
+            </Mutation> */}
+
             <View style={styles.register}>
               <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
               <TouchableWithoutFeedback
@@ -170,7 +271,7 @@ function Login({ UserAction }) {
               >
                 <Text style={styles.labelRegister}>Cadastre-se</Text>
               </TouchableWithoutFeedback>
-              <Icon name="chevron-right" size={30} color="#333" />
+              <Icon name="chevron-right" size={30} color={BgColor} />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -221,7 +322,7 @@ const styles = StyleSheet.create({
   },
 
   labelRegister: {
-    color: "#333",
+    color: BgColor,
     fontSize: 18,
     fontWeight: "bold"
   },
@@ -271,3 +372,4 @@ const mapDispatchToProps = dispatch =>
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
+// export default Login;

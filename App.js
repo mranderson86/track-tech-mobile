@@ -1,26 +1,35 @@
 import React from "react";
 import { StatusBar } from "react-native";
 import { Provider } from "react-redux";
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { ApolloProvider } from "react-apollo";
 
-import apolloClient from "./src/services/Apollo";
+import { createClientApollo } from "./src/services/Apollo";
+
 import MainNavigator from "./src/routes/MainNavigation";
 import userReducer from "./src/store/Users/userReducer";
 import projectReducer from "./src/store/Projects/projectReducer";
 
+const token = "";
+const client = createClientApollo(token);
+
 // Armazena os estados na store
 const store = createStore(
-  combineReducers({ userLogin: userReducer, userProjects: projectReducer })
+  combineReducers({
+    userLogin: userReducer,
+    userProjects: projectReducer
+  })
 );
 
 function App() {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#FF4949" />
-      <Provider store={store}>
-        <MainNavigator />
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <MainNavigator />
+        </Provider>
+      </ApolloProvider>
     </>
   );
 }

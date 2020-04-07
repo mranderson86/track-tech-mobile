@@ -1,33 +1,19 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
+import React from "react";
+import { connect } from "react-redux";
+import { NavigationContainer } from "@react-navigation/native";
 
-import AuthNavigator from './AuthNavigator';
-import AppNavigator from './AppNavigator';
-
-// Cria o menu de navegação
-// Autenticação e Cadastro
-// const MainNavigator = NavigationContainer(
-//   // Cria tabNavigator
-//   createSwitchNavigator(
-//     // Configura navegação
-//     {
-//       Auth: AuthNavigator,
-//       App: AppNavigator
-//     },
-//     {
-//       // Rota de navegação inicial
-//       initialRouteName: "Auth"
-//     }
-//   )
-// );
+import AuthNavigator from "./AuthNavigator";
+import AppNavigator from "./AppNavigator";
 
 function MainNavigator(props) {
   const { userLogin } = props;
   const { authenticate } = userLogin;
+  // const authenticate = false;
 
   return (
-    <NavigationContainer>{authenticate ? <AppNavigator /> : <AuthNavigator />}</NavigationContainer>
+    <NavigationContainer>
+      {authenticate ? <AppNavigator /> : <AuthNavigator />}
+    </NavigationContainer>
   );
 }
 
@@ -37,3 +23,4 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(MainNavigator);
+// export default MainNavigator;

@@ -47,7 +47,7 @@ function Home(props) {
         <View style={styles.cardItems}>
           <View style={styles.cardItemsValueLabel}>
             <Text style={styles.cardItemLabel}>Bem Vindo,</Text>
-            <Text style={styles.cardItemValue}>{user.nome}</Text>
+            <Text style={styles.cardItemValue}>{user.username}</Text>
           </View>
 
           <Text style={styles.cardItemLabel}>Sair ? </Text>
