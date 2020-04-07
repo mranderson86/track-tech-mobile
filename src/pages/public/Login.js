@@ -106,12 +106,9 @@ function Login(props) {
 
       if (data) {
         const token = data.login;
-        const authenticate = true;
-
         const client = createClientApollo(token);
 
         // consulta usuário (?)
-        // const user = await useQuery(USER_QUERY);
         const response = await client.query({
           query: USER_QUERY
         });
@@ -119,8 +116,12 @@ function Login(props) {
         const { currentUser } = response.data;
 
         if (currentUser) {
+          const authenticate = true;
           const user = currentUser;
 
+          setSubmitting(false);
+
+          // update state user
           UserAction({
             authenticate,
             token,
@@ -143,30 +144,6 @@ function Login(props) {
       //     password
       //   }
       // });
-
-      //const { token } = response.data;
-      // if (token) {
-      //   try {
-      //     const res = await api.get(`users/profile`, {
-      //       headers: {
-      //         authorization: `Bearer ${token}`
-      //       }
-      //     });
-
-      //     const user = res.data;
-
-      //     // altera o estado do usuário
-      //     UserAction({
-      //       authenticate: true,
-      //       token,
-      //       user
-      //     });
-      //   } catch (err) {
-      //     alert(err);
-      //   }
-      // } else {
-      //   setShow(false);
-      // }
     } catch (err) {
       setSubmitting(false);
       alert(err);

@@ -48,7 +48,7 @@ function Register(props) {
   const [state, setState] = useState({ enabledKeyboard: false });
 
   // Envia usuário e senha para autenticação
-  async function submitRegister(values) {
+  async function submitRegister({ values, setSubmitting }) {
     try {
       const { username, email, password } = values;
 
@@ -89,16 +89,16 @@ function Register(props) {
   //  Renderiza cadastro
   return (
     <Formik
+      validationSchema={validationSchema}
       initialValues={{
         username: "",
         email: "",
         password: "",
         repassword: ""
       }}
-      onSubmit={values => {
-        submitRegister(values);
+      onSubmit={(values, { props, setErrors, setSubmitting }) => {
+        submitRegister({ values, setSubmitting });
       }}
-      validationSchema={validationSchema}
     >
       {props => (
         <KeyboardAvoidingView
