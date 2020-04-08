@@ -43,6 +43,22 @@ const validationSchema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "Senha não confere")
 });
 
+const CREATE_USER_MUTATION = gql`
+  mutation createUser($username: String!, $email: String!, $password: String!) {
+    createUser(username: $username, email: $email, password: $password) {
+      id
+      username
+      email
+    }
+  }
+`;
+
+const LOGIN_MUTATION = gql`
+  mutation postLogin($email: String!, $password: String!) {
+    login(email: $email, password: $password)
+  }
+`;
+
 // Tela de Login / Autenticação do usuário
 function Register(props) {
   const { UserAction } = props;
@@ -53,37 +69,48 @@ function Register(props) {
   async function submitRegister({ values, setSubmitting }) {
     try {
       const { username, email, password } = values;
+      const client = createClientApollo();
+      const response = await client.mutate({
+        mutation: CREATE_USER_MUTATION,
+        variables: {
+          username,
+          email,
+          password
+        }
+      });
 
-      const user = {
-        username,
-        email,
-        password
-      };
+      const { createUser } = response.data;
 
-      const response = await api.post("/users", user);
-
-      const { data } = response;
-
-      if (data) {
+      if (createUser) {
         try {
-          const login = { email, password };
-          const authentication = await api.post("/sessions", login);
-          const { token } = authentication.data;
+          const authentication = await client.mutate({
+            mutation: LOGIN_MUTATION,
+            variables: { email, password }
+          });
 
-          if (token) {
+          const { login } = authentication.data;
+
+          if (login) {
+            const token = login;
+            const authenticate = true;
+            const user = createUser;
+
             UserAction({
-              authenticate: true,
+              authenticate,
               user,
               token
             });
           }
         } catch (err) {
+          setSubmitting(false);
           alert(`Token fail ! ${err}`);
         }
       } else {
+        setSubmitting(false);
         alert("Register not found");
       }
     } catch (err) {
+      setSubmitting(false);
       alert(`Register fail ! ${err}`);
     }
   }

@@ -16,10 +16,7 @@ import { bindActionCreators } from "redux";
 import gql from "graphql-tag";
 import { createClientApollo } from "../../../services/Apollo";
 
-import api from "../../../services/Api";
 import { UserAction } from "../../../store/Users/userAction";
-import { ProjectCurrentAction } from "../../../store/Projects/projectAction";
-
 import Result from "../../../components/Result/Result";
 import ButtonConfirm from "../../../components/Button/ButtonConfirm";
 import AuthRender from "../AuthRender";
@@ -230,8 +227,8 @@ const styles = StyleSheet.create({
 
 // State em props
 const mapStateToProps = state => {
-  const { userLogin, userProjects } = state;
-  return { userLogin, userProjects };
+  const { userLogin } = state;
+  return { userLogin };
 };
 
 // Action em props

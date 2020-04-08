@@ -17,8 +17,6 @@ import { bindActionCreators } from "redux";
 import gql from "graphql-tag";
 import { createClientApollo } from "../../../services/Apollo";
 
-import api from "../../../services/Api";
-
 import Result from "../../../components/Result/Result";
 
 const USERS_TECHNOLOGIES_QUERY = gql`
