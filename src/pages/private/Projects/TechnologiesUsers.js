@@ -14,6 +14,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import gql from "graphql-tag";
+import { createClientApollo } from "../../../services/Apollo";
+
 import api from "../../../services/Api";
 import { UserAction } from "../../../store/Users/userAction";
 import { ProjectCurrentAction } from "../../../store/Projects/projectAction";
@@ -23,6 +26,19 @@ import Result from "../../../components/Result/Result";
 import ButtonConfirm from "../../../components/Button/ButtonConfirm";
 
 import AuthRender from "../AuthRender";
+
+const TECHNOLOGIES_USERS_QUERY = gql`
+  {
+    allUsers {
+      id
+      username
+      email
+      technologies {
+        technology
+      }
+    }
+  }
+`;
 
 // Renderiza cada tecnologia
 function CardItem(props) {
@@ -51,7 +67,7 @@ function CardItem(props) {
 }
 
 function TechnologiesUsers(props) {
-  const { userLogin, ProjectCurrentAction, navigation, route } = props;
+  const { userLogin, navigation, route } = props;
   const { token, user } = userLogin;
 
   const [state, setState] = useState({
@@ -68,16 +84,21 @@ function TechnologiesUsers(props) {
   // consulta a lista de projetos
   async function Load() {
     try {
-      const response = await api.get(`/users/technologies`, {
-        headers: {
-          authorization: `Bearer ${token}`
-        }
+      const client = createClientApollo(token);
+
+      // consulta tecnologias ()
+      const response = await client.query({
+        query: TECHNOLOGIES_USERS_QUERY
       });
 
-      const { data } = response;
+      const { allUsers } = response.data;
 
-      if (data) {
-        setState({ ...state, show: false, data });
+      if (allUsers) {
+        setState({
+          ...state,
+          show: false,
+          data: allUsers.filter(({ technologies }) => technologies.length !== 0)
+        });
       } else {
         setState({ ...state, show: false, data: [] });
       }

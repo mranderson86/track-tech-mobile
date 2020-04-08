@@ -14,9 +14,25 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import gql from "graphql-tag";
+import { createClientApollo } from "../../../services/Apollo";
+
 import api from "../../../services/Api";
 
 import Result from "../../../components/Result/Result";
+
+const USERS_TECHNOLOGIES_QUERY = gql`
+  {
+    allTechnologies {
+      id
+      technology
+      users {
+        id
+        username
+      }
+    }
+  }
+`;
 
 // Renderiza cada tecnologia
 function CardItem(props) {
@@ -68,16 +84,21 @@ function UsersTechnologies(props) {
   // consulta a lista de projetos
   async function Load() {
     try {
-      const response = await api.get(`/technologies/users`, {
-        headers: {
-          authorization: `Bearer ${token}`
-        }
+      const client = createClientApollo(token);
+
+      // consulta tecnologias ()
+      const response = await client.query({
+        query: USERS_TECHNOLOGIES_QUERY
       });
 
-      const { data } = response;
+      const { allTechnologies } = response.data;
 
-      if (data) {
-        setState({ ...state, show: false, data });
+      if (allTechnologies) {
+        setState({
+          ...state,
+          show: false,
+          data: allTechnologies.filter(({ users }) => users.length !== 0)
+        });
       } else {
         setState({ ...state, show: false, data: [] });
       }

@@ -17,6 +17,8 @@ import { bindActionCreators } from "redux";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
+import gql from "graphql-tag";
+import { createClientApollo } from "../../services/Apollo";
 
 import Result from "../../components/Result/Result";
 

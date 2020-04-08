@@ -13,15 +13,33 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
+import gql from "graphql-tag";
+import { createClientApollo } from "../../../services/Apollo";
+
 import api from "../../../services/Api";
 import { UserAction } from "../../../store/Users/userAction";
 import { ProjectCurrentAction } from "../../../store/Projects/projectAction";
 
 import Result from "../../../components/Result/Result";
-
 import ButtonConfirm from "../../../components/Button/ButtonConfirm";
-
 import AuthRender from "../AuthRender";
+
+const TRACKING_MUTATION = gql`
+  mutation createTracking($technologies: [Tracking!]) {
+    createTracking(technologies: $technologies) {
+      id
+    }
+  }
+`;
+
+const TECHNOLOGIES_QUERY = gql`
+  {
+    allTechnologies {
+      id
+      technology
+    }
+  }
+`;
 
 // Renderiza cada tecnologia
 function CardItem(props) {
@@ -41,12 +59,12 @@ function CardItem(props) {
 
 // Tela Lista de Projetos
 function Technologies(props) {
-  const { userLogin, ProjectCurrentAction, navigation, route } = props;
+  const { userLogin, navigation, route } = props;
   const { token, user } = userLogin;
 
   const { reload } = route.params;
 
-  const [projects, setProjects] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
   const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
 
@@ -55,21 +73,22 @@ function Technologies(props) {
     Load();
   }, [navigation, reload]);
 
-  // consulta a lista de projetos
+  // consulta a lista de tecnologias
   async function Load() {
     try {
       setShow(true);
 
-      const response = await api.get(`/technologies`, {
-        headers: {
-          authorization: `Bearer ${token}`
-        }
+      const client = createClientApollo(token);
+
+      // consulta tecnologias ()
+      const response = await client.query({
+        query: TECHNOLOGIES_QUERY
       });
 
-      const { data } = response;
+      const { allTechnologies } = response.data;
 
-      if (data) {
-        const techs = data.map(tech => {
+      if (allTechnologies) {
+        const techs = allTechnologies.map(tech => {
           return {
             ...tech,
             technology_id: tech.id,
@@ -77,19 +96,19 @@ function Technologies(props) {
           };
         });
 
-        setProjects(techs);
+        setTechnologies(techs);
       } else {
-        setProjects([]);
+        setTechnologies([]);
       }
 
       setShow(false);
     } catch (err) {
-      console.log("load ", err);
+      alert(err);
     }
   }
 
   function handleCheck(tech) {
-    const techs = projects.map(t => {
+    const techs = technologies.map(t => {
       if (t.technology_id === tech.technology_id) {
         return {
           ...t,
@@ -101,29 +120,34 @@ function Technologies(props) {
     });
 
     // atualiza lista de tecnologias
-    setProjects([...techs]);
+    setTechnologies([...techs]);
   }
 
   async function handleSubmit() {
     try {
-      const data = projects.filter(t => t.value === true);
-
-      console.log(data);
-
       setShow(true);
 
+      const data = technologies
+        .filter(({ value }) => value === true)
+        .map(({ technology_id }) => {
+          return { technology_id };
+        });
+
       if (data.length !== 0) {
-        const response = await api.post("/checkins", data, {
-          headers: {
-            authorization: `Bearer ${token}`
+        const client = createClientApollo(token);
+        const response = await client.mutate({
+          mutation: TRACKING_MUTATION,
+          variables: {
+            technologies: data
           }
         });
+
+        console.log(response);
       }
 
       setShow(false);
     } catch (err) {
-      console.log(err);
-
+      alert(err);
       setError(true);
     }
   }
@@ -136,17 +160,18 @@ function Technologies(props) {
     return <Result type="await" />;
   }
 
+  // Mostrar botão confirmar
   let showSubmit = false;
 
-  projects.map(e => {
+  technologies.map(e => {
     if (e.value) showSubmit = true;
   });
 
-  //  Renderiza lista de projetos
+  //  Renderiza lista de tecnologias
   return (
     <View style={styles.container}>
       <FlatList
-        data={projects}
+        data={technologies}
         keyExtractor={item => item.technology_id.toString()}
         renderItem={({ item }) => (
           <CardItem item={item} handleCheck={handleCheck} />
@@ -213,8 +238,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      UserAction,
-      ProjectCurrentAction
+      UserAction
     },
     dispatch
   );
