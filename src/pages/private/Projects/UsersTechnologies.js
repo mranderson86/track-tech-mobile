@@ -9,7 +9,7 @@ import {
   Image
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -46,16 +46,11 @@ function CardItem(props) {
       }}
     >
       <View style={styles.technologyContainer}>
-        <MaterialCommunityIcons name="react" size={50} />
         <View style={styles.technology}>
           <Text style={styles.title}>{item.technology}</Text>
           <Text style={styles.couter}>{users.length || 0} Usuários</Text>
         </View>
-        <MaterialCommunityIcons
-          name="chevron-right"
-          size={30}
-          color="#1FB6FF"
-        />
+        <Feather name="chevron-right" size={30} color="#1FB6FF" />
       </View>
     </TouchableOpacity>
   );

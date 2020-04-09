@@ -12,8 +12,8 @@ import {
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
-
-import Icon from "@expo/vector-icons/MaterialIcons";
+import { Feather } from "@expo/vector-icons";
+// import Icon from "react-native-vector-icons/Feather";
 import { Input, Button } from "react-native-elements";
 
 import { connect } from "react-redux";
@@ -26,10 +26,7 @@ import { useMutation, useQuery } from "react-apollo";
 import gql from "graphql-tag";
 
 import Result from "../../components/Result/Result";
-
-import api from "../../services/Api";
 import { createClientApollo } from "../../services/Apollo";
-
 import { UserAction } from "../../store/Users/userAction";
 
 // Form Validation
@@ -67,31 +64,8 @@ function Login(props) {
 
   const [loginMutation] = useMutation(LOGIN_MUTATION);
 
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-
   const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
-
-  useEffect(() => {
-    async function load() {
-      // const response = await client.query({
-      //   query: gql`
-      //     {
-      //       allUsers {
-      //         id
-      //         username
-      //         email
-      //       }
-      //     }
-      //   `
-      // });
-
-      console.log(response);
-    }
-
-    // load();
-  }, []);
 
   // Envia usuário e senha para autenticação
   async function submitLogin({ values, setSubmitting }) {
@@ -132,18 +106,6 @@ function Login(props) {
         setSubmitting(false);
         alert("Fail authenticate, try again");
       }
-
-      // const response = await client.mutate({
-      //   mutation: gql`
-      //     mutation($email: String!, $password: String!) {
-      //       login(objects: [{ email: $email, password: $password }])
-      //     }
-      //   `,
-      //   variables: {
-      //     email,
-      //     password
-      //   }
-      // });
     } catch (err) {
       setSubmitting(false);
       alert(err);
@@ -175,7 +137,7 @@ function Login(props) {
                 name="email"
                 label="E-mail"
                 textContentType="emailAddress"
-                leftIcon={<Icon name="email" size={24} color="#999" />}
+                // leftIcon={<Icon name="mail" size={24} color="#999" />}
                 value={props.values.email}
                 onBlur={props.handleBlur("email")}
                 onChangeText={props.handleChange("email")}
@@ -191,7 +153,7 @@ function Login(props) {
                 label="Senha"
                 secureTextEntry
                 textContentType="password"
-                leftIcon={<Icon name="lock" size={24} color="#999" />}
+                // leftIcon={<Icon name="lock" size={24} color="#999" />}
                 value={props.values.password}
                 onBlur={props.handleBlur("password")}
                 onChangeText={props.handleChange("password")}
@@ -205,7 +167,7 @@ function Login(props) {
               containerStyle={styles.buttonLoginContainer}
               buttonStyle={styles.buttonSave}
               titleStyle={styles.labelButtonLogin}
-              icon={<Icon name="chevron-right" size={30} color="white" />}
+              // icon={<Icon name="chevron-right" size={30} color="white" />}
               iconRight
               title="Entrar"
               onPress={props.handleSubmit}
@@ -248,7 +210,7 @@ function Login(props) {
               >
                 <Text style={styles.labelRegister}>Cadastre-se</Text>
               </TouchableWithoutFeedback>
-              <Icon name="chevron-right" size={30} color={BgColor} />
+              {/* <Feather name="chevron-right" size={20} color="#E02041" /> */}
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -257,7 +219,7 @@ function Login(props) {
   );
 }
 
-const BgColor = "#FF4949"; // "#F7F7F7"
+const BgColor = "#FF4949";
 
 const styles = StyleSheet.create({
   error: {

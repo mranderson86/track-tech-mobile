@@ -143,7 +143,7 @@ function Register(props) {
                   name="username"
                   label="Nome"
                   textContentType="username"
-                  leftIcon={<Icon name="user" size={24} color="#999" />}
+                  // leftIcon={<Icon name="user" size={24} color="#999" />}
                   value={props.values.username}
                   onChangeText={props.handleChange("username")}
                   onBlur={props.handleBlur("username")}
@@ -159,7 +159,7 @@ function Register(props) {
                   name="email"
                   label="E-mail"
                   textContentType="emailAddress"
-                  leftIcon={<Icon name="mail" size={24} color="#999" />}
+                  // leftIcon={<Icon name="mail" size={24} color="#999" />}
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
                   onBlur={props.handleBlur("email")}
@@ -176,7 +176,7 @@ function Register(props) {
                   label="Senha"
                   secureTextEntry
                   textContentType="password"
-                  leftIcon={<Icon name="lock" size={24} color="#999" />}
+                  // leftIcon={<Icon name="lock" size={24} color="#999" />}
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
                   onBlur={props.handleBlur("password")}
@@ -193,7 +193,7 @@ function Register(props) {
                   label="Confirmar Senha"
                   secureTextEntry
                   textContentType="password"
-                  leftIcon={<Icon name="lock" size={24} color="#999" />}
+                  // leftIcon={<Icon name="lock" size={24} color="#999" />}
                   value={props.values.repassword}
                   onChangeText={props.handleChange("repassword")}
                   onBlur={props.handleBlur("repassword")}
@@ -210,7 +210,7 @@ function Register(props) {
                 containerStyle={styles.buttonLoginContainer}
                 buttonStyle={styles.buttonSave}
                 titleStyle={styles.labelButtonLogin}
-                icon={<Icon name="chevron-right" size={30} color="white" />}
+                // icon={<Icon name="chevron-right" size={30} color="white" />}
                 iconRight
                 title="Cadastrar"
                 onPress={props.handleSubmit}

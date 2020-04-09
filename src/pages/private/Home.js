@@ -1,43 +1,27 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+
+import { Feather } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { UserAction } from "../../store/Users/userAction";
-import {
-  ProjectCurrentAction,
-  StepCurrentAction
-} from "../../store/Projects/projectAction";
 
 // Tela Home / Bem Vindo
 function Home(props) {
-  const { navigation, UserAction, StepCurrentAction } = props;
+  const { navigation, UserAction } = props;
   const { userLogin } = props;
   const { user } = userLogin;
 
-  useEffect(() => {});
-
   // Carrega a tela de cadastro de uma nova etapa
   function ExitApp() {
-    ProjectCurrentAction({
-      project: {}
-    });
-
-    StepCurrentAction({
-      step: {}
-    });
-
     UserAction({
       authenticate: false,
-      professional: false,
       user: {},
       token: ""
     });
-
-    // navigation.navigate("Login");
   }
 
   //  Renderiza cada etapa da lista de Etapa
@@ -52,7 +36,7 @@ function Home(props) {
 
           <Text style={styles.cardItemLabel}>Sair ? </Text>
           <TouchableOpacity style={styles.buttonSave} onPress={() => ExitApp()}>
-            <MaterialIcons name="exit-to-app" size={50} color="#1FB6FF" />
+            <Feather name="log-out" size={30} color="#1FB6FF" />
           </TouchableOpacity>
         </View>
       </View>
@@ -71,7 +55,7 @@ function Home(props) {
             </Text>
           </View>
 
-          <MaterialIcons name="chevron-right" size={30} color="#1FB6FF" />
+          <Feather name="chevron-right" size={30} color="#1FB6FF" />
         </View>
       </TouchableOpacity>
 
@@ -87,7 +71,7 @@ function Home(props) {
             <Text style={styles.cardItemValue}>Usuários por Tecnologias</Text>
           </View>
 
-          <MaterialIcons name="chevron-right" size={30} color="#1FB6FF" />
+          <Feather name="chevron-right" size={30} color="#1FB6FF" />
         </View>
       </TouchableOpacity>
 
@@ -103,7 +87,7 @@ function Home(props) {
             <Text style={styles.cardItemValue}>Tecnologias por Usuário</Text>
           </View>
 
-          <MaterialIcons name="chevron-right" size={30} color="#1FB6FF" />
+          <Feather name="chevron-right" size={30} color="#1FB6FF" />
         </View>
       </TouchableOpacity>
     </View>
@@ -151,12 +135,10 @@ const styles = StyleSheet.create({
   cardItemsValueLabel: {
     flexDirection: "column",
     width: "80%"
-    // backgroundColor: 'red',
   },
 
   cardItemLabel: {
     color: "#888",
-    // backgroundColor: 'yellow',
     paddingTop: "1%",
     paddingBottom: "1%"
   },
@@ -164,8 +146,6 @@ const styles = StyleSheet.create({
   cardItemValue: {
     paddingLeft: "5%",
     paddingRight: "10%",
-    // width: '50%',
-    // backgroundColor: 'blue',
     paddingTop: "1%",
     paddingBottom: "1%",
     fontWeight: "bold",
@@ -183,9 +163,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      UserAction,
-      ProjectCurrentAction,
-      StepCurrentAction
+      UserAction
     },
     dispatch
   );

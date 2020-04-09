@@ -59,7 +59,7 @@ function Technologies(props) {
   const { userLogin, navigation, route } = props;
   const { token, user } = userLogin;
 
-  const { reload } = route.params;
+  // const { reload } = route.params;
 
   const [technologies, setTechnologies] = useState([]);
   const [show, setShow] = useState(false);
@@ -68,7 +68,7 @@ function Technologies(props) {
   // carrega a lista das etapas
   useEffect(() => {
     Load();
-  }, [navigation, reload]);
+  }, []);
 
   // consulta a lista de tecnologias
   async function Load() {

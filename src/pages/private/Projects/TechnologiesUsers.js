@@ -9,7 +9,6 @@ import {
   Image
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { FontAwesome } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -44,7 +43,6 @@ function CardItem(props) {
   return (
     <View style={styles.cardContainer}>
       <View style={styles.technologyContainer}>
-        <FontAwesome name="user-circle" size={50} />
         <View style={styles.technology}>
           <Text style={styles.title}>{username}</Text>
           <Text style={styles.couter}>{technologies.length} Check-In</Text>
