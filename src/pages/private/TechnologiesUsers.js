@@ -8,25 +8,28 @@ import {
   TouchableOpacity,
   Image
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
+import { CheckBox } from "react-native-elements";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import gql from "graphql-tag";
-import { createClientApollo } from "../../../services/Apollo";
+import { createClientApollo } from "../../services/Apollo";
 
-import Result from "../../../components/Result/Result";
+import { UserAction } from "../../store/Users/userAction";
 
-const USERS_TECHNOLOGIES_QUERY = gql`
+import Result from "../../components/Result/Result";
+import ButtonConfirm from "../../components/Button/ButtonConfirm";
+import AuthRender from "./AuthRender";
+
+const TECHNOLOGIES_USERS_QUERY = gql`
   {
-    allTechnologies {
+    allUsers {
       id
-      technology
-      users {
-        id
-        username
+      username
+      email
+      technologies {
+        technology
       }
     }
   }
@@ -34,34 +37,32 @@ const USERS_TECHNOLOGIES_QUERY = gql`
 
 // Renderiza cada tecnologia
 function CardItem(props) {
-  const { item, navigation } = props;
-  const { users } = item;
+  const { item, handleCheck } = props;
+  const { technologies, username } = item;
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      style={styles.cardContainer}
-      onPress={() => {
-        navigation.navigate("Users", { users });
-      }}
-    >
+    <View style={styles.cardContainer}>
       <View style={styles.technologyContainer}>
         <View style={styles.technology}>
-          <Text style={styles.title}>{item.technology}</Text>
-          <Text style={styles.couter}>{users.length || 0} Usuários</Text>
+          <Text style={styles.title}>{username}</Text>
+          <Text style={styles.counter}>{technologies.length} Tecnologias</Text>
+
+          <View>
+            {technologies.map(({ technology }, id) => (
+              <Text key={id} style={styles.counter}>
+                {technology}
+              </Text>
+            ))}
+          </View>
         </View>
-        <Feather name="chevron-right" size={30} color="#1FB6FF" />
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
-// Tela Lista de Projetos
-function UsersTechnologies(props) {
-  const { userLogin } = props;
+function TechnologiesUsers(props) {
+  const { userLogin, navigation, route } = props;
   const { token, user } = userLogin;
-
-  const navigation = useNavigation();
 
   const [state, setState] = useState({
     data: [],
@@ -81,16 +82,16 @@ function UsersTechnologies(props) {
 
       // consulta tecnologias ()
       const response = await client.query({
-        query: USERS_TECHNOLOGIES_QUERY
+        query: TECHNOLOGIES_USERS_QUERY
       });
 
-      const { allTechnologies } = response.data;
+      const { allUsers } = response.data;
 
-      if (allTechnologies) {
+      if (allUsers) {
         setState({
           ...state,
           show: false,
-          data: allTechnologies.filter(({ users }) => users.length !== 0)
+          data: allUsers.filter(({ technologies }) => technologies.length !== 0)
         });
       } else {
         setState({ ...state, show: false, data: [] });
@@ -116,9 +117,7 @@ function UsersTechnologies(props) {
       <FlatList
         data={state.data}
         keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <CardItem item={item} navigation={navigation} />
-        )}
+        renderItem={({ item }) => <CardItem item={item} />}
       />
     </View>
   );
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
 
-  couter: {
+  counter: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#888"
@@ -169,4 +168,13 @@ const mapStateToProps = state => {
   return { userLogin };
 };
 
-export default connect(mapStateToProps)(UsersTechnologies);
+// Action em props
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      UserAction
+    },
+    dispatch
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(TechnologiesUsers);

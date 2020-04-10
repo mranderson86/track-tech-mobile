@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-// Renderiza apenas elementos Autorizados ao usuário.
+// Renderiza apenas elementos autorizados ao usuário.
 function AuthRender(props) {
   return <>{props.auth ? props.children : <></>}</>;
 }

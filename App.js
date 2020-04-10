@@ -8,7 +8,6 @@ import { createClientApollo } from "./src/services/Apollo";
 
 import MainNavigator from "./src/routes/MainNavigation";
 import userReducer from "./src/store/Users/userReducer";
-import projectReducer from "./src/store/Projects/projectReducer";
 
 const token = "";
 const client = createClientApollo(token);
@@ -16,8 +15,7 @@ const client = createClientApollo(token);
 // Armazena os estados na store
 const store = createStore(
   combineReducers({
-    userLogin: userReducer,
-    userProjects: projectReducer
+    userLogin: userReducer
   })
 );
 

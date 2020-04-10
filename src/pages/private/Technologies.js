@@ -14,12 +14,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import gql from "graphql-tag";
-import { createClientApollo } from "../../../services/Apollo";
+import { createClientApollo } from "../../services/Apollo";
 
-import { UserAction } from "../../../store/Users/userAction";
-import Result from "../../../components/Result/Result";
-import ButtonConfirm from "../../../components/Button/ButtonConfirm";
-import AuthRender from "../AuthRender";
+import { UserAction } from "../../store/Users/userAction";
+import Result from "../../components/Result/Result";
+import ButtonConfirm from "../../components/Button/ButtonConfirm";
+import AuthRender from "./AuthRender";
 
 const TRACKING_MUTATION = gql`
   mutation createTracking($technologies: [Tracking!]) {
@@ -29,9 +29,20 @@ const TRACKING_MUTATION = gql`
   }
 `;
 
+// fetch all technologies
 const TECHNOLOGIES_QUERY = gql`
   {
     allTechnologies {
+      id
+      technology
+    }
+  }
+`;
+
+// fetch only technologies available
+const TECHNOLOGIES_AVAILABLE_QUERY = gql`
+  {
+    fetchTechnologiesAvailable {
       id
       technology
     }
@@ -79,13 +90,13 @@ function Technologies(props) {
 
       // consulta tecnologias ()
       const response = await client.query({
-        query: TECHNOLOGIES_QUERY
+        query: TECHNOLOGIES_AVAILABLE_QUERY
       });
 
-      const { allTechnologies } = response.data;
+      const { fetchTechnologiesAvailable } = response.data;
 
-      if (allTechnologies) {
-        const techs = allTechnologies.map(tech => {
+      if (fetchTechnologiesAvailable) {
+        const techs = fetchTechnologiesAvailable.map(tech => {
           return {
             ...tech,
             technology_id: tech.id,
@@ -95,6 +106,8 @@ function Technologies(props) {
 
         setTechnologies(techs);
       } else {
+        alert("Não tecnologias disponivéis");
+
         setTechnologies([]);
       }
 
@@ -139,7 +152,11 @@ function Technologies(props) {
           }
         });
 
-        console.log(response);
+        if (response) {
+          await Load();
+
+          alert("Tracking Concluído !");
+        }
       }
 
       setShow(false);

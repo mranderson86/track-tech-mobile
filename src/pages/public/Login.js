@@ -171,37 +171,9 @@ function Login(props) {
               iconRight
               title="Entrar"
               onPress={props.handleSubmit}
-              // **disabled={!props.isValid || props.isSubmitting}
+              disabled={!props.isValid || props.isSubmitting}
               loading={props.isSubmitting}
             />
-
-            {/* <Mutation
-              mutation={LOGIN_MUTATION}
-              variables={{
-                email: props.values.email,
-                password: props.values.password
-              }}
-              onCompleted={response => {
-                console.log(response);
-              }}
-              onError={error => {
-                alert(error);
-              }}
-            >
-              {postLogin => (
-                <Button
-                  containerStyle={styles.buttonLoginContainer}
-                  buttonStyle={styles.buttonSave}
-                  titleStyle={styles.labelButtonLogin}
-                  icon={<Icon name="chevron-right" size={30} color="white" />}
-                  iconRight
-                  title="Entrar"
-                  onPress={postLogin}
-                  // **disabled={!props.isValid || props.isSubmitting}
-                  loading={props.isSubmitting}
-                />
-              )}
-            </Mutation> */}
 
             <View style={styles.register}>
               <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>

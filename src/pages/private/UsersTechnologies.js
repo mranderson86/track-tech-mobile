@@ -8,28 +8,25 @@ import {
   TouchableOpacity,
   Image
 } from "react-native";
-import { CheckBox } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import gql from "graphql-tag";
-import { createClientApollo } from "../../../services/Apollo";
+import { createClientApollo } from "../../services/Apollo";
 
-import { UserAction } from "../../../store/Users/userAction";
+import Result from "../../components/Result/Result";
 
-import Result from "../../../components/Result/Result";
-import ButtonConfirm from "../../../components/Button/ButtonConfirm";
-import AuthRender from "../AuthRender";
-
-const TECHNOLOGIES_USERS_QUERY = gql`
+const USERS_TECHNOLOGIES_QUERY = gql`
   {
-    allUsers {
+    allTechnologies {
       id
-      username
-      email
-      technologies {
-        technology
+      technology
+      users {
+        id
+        username
       }
     }
   }
@@ -37,32 +34,34 @@ const TECHNOLOGIES_USERS_QUERY = gql`
 
 // Renderiza cada tecnologia
 function CardItem(props) {
-  const { item, handleCheck } = props;
-  const { technologies, username } = item;
+  const { item, navigation } = props;
+  const { users } = item;
 
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={styles.cardContainer}
+      onPress={() => {
+        navigation.navigate("Users", { users });
+      }}
+    >
       <View style={styles.technologyContainer}>
         <View style={styles.technology}>
-          <Text style={styles.title}>{username}</Text>
-          <Text style={styles.couter}>{technologies.length} Check-In</Text>
-
-          <View>
-            {technologies.map(tech => (
-              <Text key={tech.id} style={styles.couter}>
-                {tech.technology}
-              </Text>
-            ))}
-          </View>
+          <Text style={styles.title}>{item.technology}</Text>
+          <Text style={styles.couter}>{users.length || 0} Usuários</Text>
         </View>
+        <Feather name="chevron-right" size={30} color="#1FB6FF" />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
-function TechnologiesUsers(props) {
-  const { userLogin, navigation, route } = props;
+// Tela Lista de Projetos
+function UsersTechnologies(props) {
+  const { userLogin } = props;
   const { token, user } = userLogin;
+
+  const navigation = useNavigation();
 
   const [state, setState] = useState({
     data: [],
@@ -82,16 +81,16 @@ function TechnologiesUsers(props) {
 
       // consulta tecnologias ()
       const response = await client.query({
-        query: TECHNOLOGIES_USERS_QUERY
+        query: USERS_TECHNOLOGIES_QUERY
       });
 
-      const { allUsers } = response.data;
+      const { allTechnologies } = response.data;
 
-      if (allUsers) {
+      if (allTechnologies) {
         setState({
           ...state,
           show: false,
-          data: allUsers.filter(({ technologies }) => technologies.length !== 0)
+          data: allTechnologies.filter(({ users }) => users.length !== 0)
         });
       } else {
         setState({ ...state, show: false, data: [] });
@@ -117,7 +116,9 @@ function TechnologiesUsers(props) {
       <FlatList
         data={state.data}
         keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => <CardItem item={item} />}
+        renderItem={({ item }) => (
+          <CardItem item={item} navigation={navigation} />
+        )}
       />
     </View>
   );
@@ -168,13 +169,4 @@ const mapStateToProps = state => {
   return { userLogin };
 };
 
-// Action em props
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      UserAction
-    },
-    dispatch
-  );
-
-export default connect(mapStateToProps, mapDispatchToProps)(TechnologiesUsers);
+export default connect(mapStateToProps)(UsersTechnologies);

@@ -4,10 +4,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Home from "../pages/private/Home";
 
-import UsersTechnologies from "../pages/private/Projects/UsersTechnologies";
-import TechnologiesUsers from "../pages/private/Projects/TechnologiesUsers";
-import Technologies from "../pages/private/Projects/Technologies";
-import Users from "../pages/private/Projects/Users";
+import UsersTechnologies from "../pages/private/UsersTechnologies";
+import TechnologiesUsers from "../pages/private/TechnologiesUsers";
+import Technologies from "../pages/private/Technologies";
+import Users from "../pages/private/Users";
 
 const AppStack = createStackNavigator();
 
@@ -35,7 +35,7 @@ function AppNavigator() {
         name="Technologies"
         component={Technologies}
         options={{
-          title: "Tecnologias"
+          title: "Tecnologias Disponíveis"
         }}
       />
 
