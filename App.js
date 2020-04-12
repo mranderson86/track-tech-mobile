@@ -1,11 +1,11 @@
 import React from "react";
 import { StatusBar } from "react-native";
-import { Provider } from "react-redux";
+import { Provider as StoreProvider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { ApolloProvider } from "react-apollo";
 
 import { createClientApollo } from "./src/services/Apollo";
-
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import MainNavigator from "./src/routes/MainNavigation";
 import userReducer from "./src/store/Users/userReducer";
 
@@ -19,16 +19,22 @@ const store = createStore(
   })
 );
 
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#0099FF"
+  }
+};
+
 function App() {
   return (
-    <>
-      <StatusBar barStyle="light-content" backgroundColor="#FF4949" />
-      <ApolloProvider client={client}>
-        <Provider store={store}>
-          <MainNavigator />
-        </Provider>
-      </ApolloProvider>
-    </>
+    <StoreProvider store={store}>
+      <PaperProvider theme={theme}>
+        <StatusBar barStyle="light-content" backgroundColor="#999" />
+        <MainNavigator />
+      </PaperProvider>
+    </StoreProvider>
   );
 }
 

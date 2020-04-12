@@ -20,7 +20,6 @@ import { UserAction } from "../../store/Users/userAction";
 
 import Result from "../../components/Result/Result";
 import ButtonConfirm from "../../components/Button/ButtonConfirm";
-import AuthRender from "./AuthRender";
 
 const TECHNOLOGIES_USERS_QUERY = gql`
   {

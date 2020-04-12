@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text,
   StyleSheet,
   View,
   TouchableOpacity,
@@ -13,16 +12,20 @@ import {
 
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
-// import Icon from "react-native-vector-icons/Feather";
-import { Input, Button } from "react-native-elements";
+import {
+  HelperText,
+  TextInput,
+  Button,
+  Text,
+  useTheme,
+  withTheme
+} from "react-native-paper";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Query, Mutation } from "react-apollo";
-import { useMutation, useQuery } from "react-apollo";
 import gql from "graphql-tag";
 
 import Result from "../../components/Result/Result";
@@ -61,8 +64,7 @@ const USER_QUERY = gql`
 function Login(props) {
   const { UserAction } = props;
   const navigation = useNavigation();
-
-  const [loginMutation] = useMutation(LOGIN_MUTATION);
+  const theme = useTheme();
 
   const [show, setShow] = useState(false);
   const [error, setError] = useState(false);
@@ -74,7 +76,10 @@ function Login(props) {
 
       const { email, password } = values;
 
-      const { data } = await loginMutation({
+      const client = createClientApollo();
+
+      const { data } = await client.mutate({
+        mutation: LOGIN_MUTATION,
         variables: values
       });
 
@@ -129,51 +134,49 @@ function Login(props) {
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "android" ? "height" : "padding"}
-          enabled={false}
+          enabled={true}
         >
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
-              <Input
-                name="email"
-                label="E-mail"
-                textContentType="emailAddress"
-                // leftIcon={<Icon name="mail" size={24} color="#999" />}
+              <TextInput
+                theme={theme}
+                label="Email"
                 value={props.values.email}
-                onBlur={props.handleBlur("email")}
                 onChangeText={props.handleChange("email")}
-                errorStyle={styles.error}
-                errorMessage={props.touched.email && props.errors.email}
-                inputStyle={{ paddingLeft: 5 }}
               />
+              <HelperText type="error" visible={props.touched.email}>
+                {props.touched.email && props.errors.email}
+              </HelperText>
             </View>
 
             <View style={styles.inputContainer}>
-              <Input
-                name="password"
-                label="Senha"
-                secureTextEntry
+              <TextInput
+                theme={theme}
                 textContentType="password"
-                // leftIcon={<Icon name="lock" size={24} color="#999" />}
+                secureTextEntry
+                label="Senha"
                 value={props.values.password}
-                onBlur={props.handleBlur("password")}
                 onChangeText={props.handleChange("password")}
-                errorStyle={styles.error}
-                errorMessage={props.touched.password && props.errors.password}
-                inputStyle={{ paddingLeft: 5 }}
               />
+              <HelperText type="error" visible={props.touched.password}>
+                {props.touched.password && props.errors.password}
+              </HelperText>
             </View>
 
-            <Button
-              containerStyle={styles.buttonLoginContainer}
-              buttonStyle={styles.buttonSave}
-              titleStyle={styles.labelButtonLogin}
-              // icon={<Icon name="chevron-right" size={30} color="white" />}
-              iconRight
-              title="Entrar"
-              onPress={props.handleSubmit}
-              disabled={!props.isValid || props.isSubmitting}
-              loading={props.isSubmitting}
-            />
+            <View style={styles.buttonLoginContainer}>
+              <Button
+                theme={theme}
+                contentStyle={{ padding: 25 }}
+                style={styles.buttonLogin}
+                labelStyle={styles.labelButtonLogin}
+                mode="contained"
+                onPress={props.handleSubmit}
+                loading={props.isSubmitting}
+                // disabled={!props.isValid || props.isSubmitting}
+              >
+                ENTRAR
+              </Button>
+            </View>
 
             <View style={styles.register}>
               <Text style={styles.labelNoRegister}>Não tem cadastro ?</Text>
@@ -182,7 +185,6 @@ function Login(props) {
               >
                 <Text style={styles.labelRegister}>Cadastre-se</Text>
               </TouchableWithoutFeedback>
-              {/* <Feather name="chevron-right" size={20} color="#E02041" /> */}
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -191,7 +193,8 @@ function Login(props) {
   );
 }
 
-const BgColor = "#FF4949";
+// const BgColor = "rgb(0, 153, 255)";
+const BgColor = "#FFF";
 
 const styles = StyleSheet.create({
   error: {
@@ -233,7 +236,7 @@ const styles = StyleSheet.create({
   },
 
   labelRegister: {
-    color: BgColor,
+    // color: "#1FB6FF",
     fontSize: 18,
     fontWeight: "bold"
   },
@@ -246,14 +249,13 @@ const styles = StyleSheet.create({
 
   buttonLoginContainer: {
     alignItems: "center",
-    marginTop: "5%",
+    marginTop: "1%",
     marginBottom: "5%"
   },
 
-  buttonSave: {
+  buttonLogin: {
     width: 200,
     height: 40,
-    backgroundColor: "#1FB6FF",
     flexDirection: "row",
     alignItems: "center"
   },
@@ -262,7 +264,6 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "bold",
     width: "85%",
-    paddingLeft: "10%",
     textAlign: "center"
   }
 });
@@ -282,5 +283,5 @@ const mapDispatchToProps = dispatch =>
     dispatch
   );
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Login));
 // export default Login;

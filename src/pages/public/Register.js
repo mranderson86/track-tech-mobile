@@ -10,7 +10,8 @@ import {
 } from "react-native";
 import Icon from "@expo/vector-icons/Feather";
 
-import { Input, Button } from "react-native-elements";
+import { Input } from "react-native-elements";
+import { HelperText, TextInput, Button } from "react-native-paper";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -133,90 +134,72 @@ function Register(props) {
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === "android" ? "height" : "padding"}
-          keyboardVerticalOffset={100}
-          enabled={state.enabledKeyboard}
+          // keyboardVerticalOffset={100}
+          // enabled={state.enabledKeyboard}
         >
           <ScrollView contentContainerStyle={styles.scroll}>
             <View style={styles.formContainer}>
               <View style={styles.inputContainer}>
-                <Input
-                  name="username"
+                <TextInput
                   label="Nome"
-                  textContentType="username"
-                  // leftIcon={<Icon name="user" size={24} color="#999" />}
                   value={props.values.username}
                   onChangeText={props.handleChange("username")}
-                  onBlur={props.handleBlur("username")}
-                  onFocus={() => setState({ ...state, enabledKeyboard: false })}
-                  errorStyle={styles.error}
-                  errorMessage={props.touched.username && props.errors.username}
-                  inputStyle={{ paddingLeft: 5 }}
                 />
+                <HelperText type="error" visible={props.touched.username}>
+                  {props.touched.username && props.errors.username}
+                </HelperText>
               </View>
 
               <View style={styles.inputContainer}>
-                <Input
-                  name="email"
+                <TextInput
                   label="E-mail"
-                  textContentType="emailAddress"
-                  // leftIcon={<Icon name="mail" size={24} color="#999" />}
                   value={props.values.email}
                   onChangeText={props.handleChange("email")}
-                  onBlur={props.handleBlur("email")}
-                  onFocus={() => setState({ ...state, enabledKeyboard: false })}
-                  errorStyle={styles.error}
-                  errorMessage={props.touched.email && props.errors.email}
-                  inputStyle={{ paddingLeft: 5 }}
                 />
+                <HelperText type="error" visible={props.touched.email}>
+                  {props.touched.email && props.errors.email}
+                </HelperText>
               </View>
 
               <View style={styles.inputContainer}>
-                <Input
-                  name="password"
-                  label="Senha"
+                <TextInput
                   secureTextEntry
                   textContentType="password"
-                  // leftIcon={<Icon name="lock" size={24} color="#999" />}
+                  label="Senha"
                   value={props.values.password}
                   onChangeText={props.handleChange("password")}
-                  onBlur={props.handleBlur("password")}
-                  onFocus={() => setState({ ...state, enabledKeyboard: true })}
-                  errorStyle={styles.error}
-                  errorMessage={props.touched.password && props.errors.password}
-                  inputStyle={{ paddingLeft: 5 }}
                 />
+                <HelperText type="error" visible={props.touched.password}>
+                  {props.touched.password && props.errors.password}
+                </HelperText>
               </View>
 
               <View style={styles.inputContainer}>
-                <Input
-                  name="repassword"
-                  label="Confirmar Senha"
+                <TextInput
                   secureTextEntry
                   textContentType="password"
-                  // leftIcon={<Icon name="lock" size={24} color="#999" />}
+                  label="Confirmar Senha"
                   value={props.values.repassword}
                   onChangeText={props.handleChange("repassword")}
-                  onBlur={props.handleBlur("repassword")}
-                  onFocus={() => setState({ ...state, enabledKeyboard: true })}
-                  errorStyle={styles.error}
-                  errorMessage={
-                    props.touched.repassword && props.errors.repassword
-                  }
-                  inputStyle={{ paddingLeft: 5 }}
                 />
+                <HelperText type="error" visible={props.touched.repassword}>
+                  {props.touched.repassword && props.errors.repassword}
+                </HelperText>
               </View>
 
-              <Button
-                containerStyle={styles.buttonLoginContainer}
-                buttonStyle={styles.buttonSave}
-                titleStyle={styles.labelButtonLogin}
-                // icon={<Icon name="chevron-right" size={30} color="white" />}
-                iconRight
-                title="Cadastrar"
-                onPress={props.handleSubmit}
-                // disabled={!props.isValid || props.isSubmitting}
-                loading={props.isSubmitting}
-              />
+              <View style={styles.buttonLoginContainer}>
+                <Button
+                  contentStyle={{ padding: 25 }}
+                  style={styles.buttonLogin}
+                  labelStyle={styles.labelButtonLogin}
+                  mode="contained"
+                  onPress={props.handleSubmit}
+                  loading={props.isSubmitting}
+                  // disabled={!props.isValid || props.isSubmitting}
+                >
+                  Cadastrar
+                </Button>
+              </View>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -225,7 +208,8 @@ function Register(props) {
   );
 }
 
-const BgColor = "#FF4949";
+// const BgColor = "#FF4949";
+const BgColor = "#FFF";
 
 const styles = StyleSheet.create({
   error: {
@@ -266,14 +250,14 @@ const styles = StyleSheet.create({
 
   buttonLoginContainer: {
     alignItems: "center",
-    marginTop: "5%",
+    marginTop: "1%",
     marginBottom: "5%"
   },
 
-  buttonSave: {
+  buttonLogin: {
     width: 200,
     height: 40,
-    backgroundColor: "#1FB6FF",
+    // backgroundColor: "#1FB6FF",
     flexDirection: "row",
     alignItems: "center"
   },

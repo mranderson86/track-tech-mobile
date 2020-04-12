@@ -10,8 +10,7 @@ function createClientApollo(token) {
 
   // Cria url da api
   const httpLink = createHttpLink({
-    uri: "https://tracking-graphql.herokuapp.com/graphql"
-    //uri: "https://127.0.0.1:3333/graphql"
+    uri
   });
 
   const authLink = setContext((_, { headers }) => {

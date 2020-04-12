@@ -6,7 +6,6 @@ import { Feather } from "@expo/vector-icons";
 
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-
 import { UserAction } from "../../store/Users/userAction";
 
 // Tela Home / Bem Vindo
@@ -26,71 +25,72 @@ function Home(props) {
 
   //  Renderiza cada etapa da lista de Etapa
   return (
-    <View style={styles.container}>
-      <View style={styles.userContainer}>
-        <View style={styles.cardItems}>
-          <View style={styles.cardItemsValueLabel}>
-            <Text style={styles.cardItemLabel}>Bem Vindo,</Text>
-            <Text style={styles.cardItemValue}>{user.username}</Text>
-          </View>
+    <BottomTab />
+    // <View style={styles.container}>
+    //   <View style={styles.userContainer}>
+    //     <View style={styles.cardItems}>
+    //       <View style={styles.cardItemsValueLabel}>
+    //         <Text style={styles.cardItemLabel}>Bem Vindo,</Text>
+    //         <Text style={styles.cardItemValue}>{user.username}</Text>
+    //       </View>
 
-          <Text style={styles.cardItemLabel}>Sair ? </Text>
-          <TouchableOpacity style={styles.buttonSave} onPress={() => ExitApp()}>
-            <Feather name="log-out" size={30} color="#1FB6FF" />
-          </TouchableOpacity>
-        </View>
-      </View>
+    //       <Text style={styles.cardItemLabel}>Sair ? </Text>
+    //       <TouchableOpacity style={styles.buttonSave} onPress={() => ExitApp()}>
+    //         <Feather name="log-out" size={30} color="#1FB6FF" />
+    //       </TouchableOpacity>
+    //     </View>
+    //   </View>
 
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={styles.cardContainer}
-        onPress={() => {
-          navigation.navigate("Technologies", { reload: false });
-        }}
-      >
-        <View style={styles.cardItems}>
-          <View style={styles.cardItemsValueLabel}>
-            <Text style={styles.cardItemValue}>
-              Fazer Check-In em Tecnologias
-            </Text>
-          </View>
+    //   <TouchableOpacity
+    //     activeOpacity={0.9}
+    //     style={styles.cardContainer}
+    //     onPress={() => {
+    //       navigation.navigate("Technologies", { reload: false });
+    //     }}
+    //   >
+    //     <View style={styles.cardItems}>
+    //       <View style={styles.cardItemsValueLabel}>
+    //         <Text style={styles.cardItemValue}>
+    //           Fazer Check-In em Tecnologias
+    //         </Text>
+    //       </View>
 
-          <Feather name="chevron-right" size={30} color="#1FB6FF" />
-        </View>
-      </TouchableOpacity>
+    //       <Feather name="chevron-right" size={30} color="#1FB6FF" />
+    //     </View>
+    //   </TouchableOpacity>
 
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={styles.cardContainer}
-        onPress={() => {
-          navigation.navigate("UsersTechnologies", { reload: false });
-        }}
-      >
-        <View style={styles.cardItems}>
-          <View style={styles.cardItemsValueLabel}>
-            <Text style={styles.cardItemValue}>Usuários por Tecnologias</Text>
-          </View>
+    //   <TouchableOpacity
+    //     activeOpacity={0.9}
+    //     style={styles.cardContainer}
+    //     onPress={() => {
+    //       navigation.navigate("UsersTechnologies", { reload: false });
+    //     }}
+    //   >
+    //     <View style={styles.cardItems}>
+    //       <View style={styles.cardItemsValueLabel}>
+    //         <Text style={styles.cardItemValue}>Usuários por Tecnologias</Text>
+    //       </View>
 
-          <Feather name="chevron-right" size={30} color="#1FB6FF" />
-        </View>
-      </TouchableOpacity>
+    //       <Feather name="chevron-right" size={30} color="#1FB6FF" />
+    //     </View>
+    //   </TouchableOpacity>
 
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={styles.cardContainer}
-        onPress={() => {
-          navigation.navigate("TechnologiesUsers", { reload: false });
-        }}
-      >
-        <View style={styles.cardItems}>
-          <View style={styles.cardItemsValueLabel}>
-            <Text style={styles.cardItemValue}>Tecnologias por Usuário</Text>
-          </View>
+    //   <TouchableOpacity
+    //     activeOpacity={0.9}
+    //     style={styles.cardContainer}
+    //     onPress={() => {
+    //       navigation.navigate("TechnologiesUsers", { reload: false });
+    //     }}
+    //   >
+    //     <View style={styles.cardItems}>
+    //       <View style={styles.cardItemsValueLabel}>
+    //         <Text style={styles.cardItemValue}>Tecnologias por Usuário</Text>
+    //       </View>
 
-          <Feather name="chevron-right" size={30} color="#1FB6FF" />
-        </View>
-      </TouchableOpacity>
-    </View>
+    //       <Feather name="chevron-right" size={30} color="#1FB6FF" />
+    //     </View>
+    //   </TouchableOpacity>
+    // </View>
   );
 }
 

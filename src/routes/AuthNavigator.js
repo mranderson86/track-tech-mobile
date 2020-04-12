@@ -13,9 +13,8 @@ function AuthNavigator() {
     <AuthStack.Navigator
       screenOptions={{
         headerTitleAlign: "center",
-        headerTintColor: "#FFFFFF",
         headerStyle: {
-          backgroundColor: "#FF4949"
+          backgroundColor: "#FFF"
         }
       }}
     >
@@ -32,7 +31,6 @@ function AuthNavigator() {
         component={Register}
         options={{
           title: "Cadastre-se"
-          // headerShown: false
         }}
       />
     </AuthStack.Navigator>
